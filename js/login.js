@@ -1,6 +1,13 @@
 // Firebase SDK import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 // Firebase 설정
 const firebaseConfig = {
@@ -45,6 +52,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (id && password) {
         try {
+          // 중복 ID 체크
+          const memberCollection = collection(db, "members");
+          const q = query(memberCollection, where("id", "==", id));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            alert("이미 존재하는 ID입니다. 다른 ID를 사용해주세요.");
+            return;
+          }
+
+          // 중복 ID가 아니라면 회원가입 진행행
           const docRef = await addDoc(collection(db, "members"), {
             id,
             password
