@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign In / Sign Up Form</title>
   <link rel="stylesheet" href="css/login.css">
-  <script src="js/login.js"></script>
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <script type="module" src="js/login.js"></script>
 
 </head>
+
 <body>
   <div id="container" class="container">
     <!-- FORM SECTION -->
@@ -19,21 +20,13 @@
           <div class="form sign-up">
             <div class="input-group">
               <i class='bx bxs-user'></i>
-              <input type="text" placeholder="Username">
-            </div>
-            <div class="input-group">
-              <i class='bx bx-mail-send'></i>
-              <input type="email" placeholder="Email">
+              <input type="text" id="sign-up-id" placeholder="ID">
             </div>
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
-              <input type="password" placeholder="Password">
+              <input type="password" id="sign-up-password" placeholder="Password">
             </div>
-            <div class="input-group">
-              <i class='bx bxs-lock-alt'></i>
-              <input type="password" placeholder="Confirm password">
-            </div>
-            <button>
+            <button id="sign-up-btn">
               Sign up
             </button>
             <p>
@@ -46,7 +39,7 @@
             </p>
           </div>
         </div>
-      
+
       </div>
       <!-- END SIGN UP -->
       <!-- SIGN IN -->
@@ -55,13 +48,13 @@
           <div class="form sign-in">
             <div class="input-group">
               <i class='bx bxs-user'></i>
-              <input type="text" placeholder="Username">
+              <input type="text" id="sign-in-id" placeholder="ID">
             </div>
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
-              <input type="password" placeholder="Password">
+              <input type="password" id="sign-in-password" placeholder="Password">
             </div>
-            <button>
+            <button id="sign-in-btn">
               Sign in
             </button>
             <p>
@@ -80,7 +73,7 @@
           </div>
         </div>
         <div class="form-wrapper">
-    
+
         </div>
       </div>
       <!-- END SIGN IN -->
@@ -94,23 +87,23 @@
           <h2>
             Welcome
           </h2>
-  
+
         </div>
         <div class="img sign-in">
-    
+
         </div>
       </div>
       <!-- END SIGN IN CONTENT -->
       <!-- SIGN UP CONTENT -->
       <div class="col align-items-center flex-col">
         <div class="img sign-up">
-        
+
         </div>
         <div class="text sign-up">
           <h2>
             Join with us
           </h2>
-  
+
         </div>
       </div>
       <!-- END SIGN UP CONTENT -->
@@ -118,4 +111,5 @@
     <!-- END CONTENT SECTION -->
   </div>
 </body>
+
 </html>
