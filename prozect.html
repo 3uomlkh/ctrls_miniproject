@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>소모임</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> <!-- Remove older version -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <!-- Remove older version -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
@@ -58,31 +59,36 @@
         const db = getFirestore(app);
 
         $("#postingbtn").click(async function () {
-    try {
-        let title = $('#title').val();
-        let contents = $('#contents').val();
-        let image = $('#image').val();
-        let category = $('#category').val();
+            try {
+                let title = $('#title').val();
+                let contents = $('#contents').val();
+                let image = $('#image').val();
+                let category = $('#category').val();
 
-        let groupDocs = await getDocs(collection(db, "group"));
-        let newGroupId = groupDocs.size > 0 
-            ? Math.max(...groupDocs.docs.map(doc => doc.data().groupId)) + 1 
-            : 1;
+                let groupDocs = await getDocs(collection(db, "group"));
+                let newGroupId = groupDocs.size > 0
+                    ? Math.max(...groupDocs.docs.map(doc => doc.data().groupId)) + 1
+                    : 1;
 
-        await addDoc(collection(db, "group"), {
-            title: title,
-            contents: contents,
-            image: image,
-            category: category,
-            groupId: newGroupId
+                await addDoc(collection(db, "group"), {
+                    title: title,
+                    contents: contents,
+                    image: image,
+                    category: category,
+                    groupId: newGroupId
+                });
+
+                alert('소모임 등록 완료!');
+                window.location.reload();
+            } catch (error) {
+                alert('등록 중 오류 발생: ' + error.message);
+            }
+        });
+        $(document).on('click', '.detail-btn', function () {
+            const groupId = $(this).data('id');
+            window.location.href = `details.html?id=${groupId}`;
         });
 
-        alert('소모임 등록 완료!');
-        window.location.reload();
-    } catch (error) {
-        alert('등록 중 오류 발생: ' + error.message);
-    }
-});
 
         $(document).ready(async function () {
             let docs = await getDocs(collection(db, "group"));
@@ -102,7 +108,7 @@
                             <h5 class="card-title">${title}</h5>
                             <p class="card-text">${contents}</p>
                             <p class="card-text">${category}</p>
-                            <button type="button" class="btn btn-outline-dark">상세 페이지</button>
+                            <button type="button" class="btn btn-outline-dark detail-btn" data-id="${doc.id}">상세 페이지</button>
                         </div>
                     </div>
                 </div>`;
