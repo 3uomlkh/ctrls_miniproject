@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="module">
         // Firebase SDK 라이브러리 가져오기
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -26,18 +27,143 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // 댓글 등록
+        $("#replyRgstBtn").click(async function () {
+            if (sessionStorage.getItem('memberId') != null) {
+                let groupId = 0;// 페이지 이동시 받아옴
+                let replyCnt = $('#replyCnt').val();
+                let createId = sessionStorage.getItem('memberId');
+
+                let doc = {
+                    'groupId': groupId,
+                    'contents': replyCnt,
+                    'createId ': createId
+                };
+                await addDoc(collection(db, "reply"), doc);
+
+                alert('댓글 등록!');
+                window.location.reload();
+            } else {
+                alert('로그인을 해주세요!!');
+                //로그인 화면으로 추후 사이트 주소 나오면 작성 예정
+            }
+        })
+
+        // 댓글 불러오기
+        let groupIdNow = '받아온 그룹 아이디';// 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
+        let q = query(collection(db, "reply"), where("groupId", "==", groupIdNow)); // 그룹 아이디가 일치하는 문서만 불러온다
+        let docs = await getDocs(q);
+        docs.forEach((doc) => {
+            let row = doc.data();
+
+            let groupId = row['groupId'];
+            let contents = row['contents'];
+            let createId = row['createId'];
+
+            let temp_html = `
+            <div>
+                <p>${contents}</p>
+                <div>
+                    <button type="button">수정</button>
+                    <button type="button">삭제</button>
+                </div>
+            </div>`;// 이후 시간 남으면 댓글의 createId와 세션의 id값을 비교해서 일치할 경우 수정 삭제 버튼을 보이게 하고 누를 수 있게 할 예정
+            $('#cmt').append(temp_html);
+        });
+
+        // 소모임 삭제
+        $("#groupDel").click(async function () {
+            let groupSlc = db.collection('group').where("groupId", "==", groupIdNow).get().then().catch();
+
+           
+        })
+
+
     </script>
+    <style>
+        .intr {
+            width: 1200px;
+            display: flex;
+        }
+
+        .intrImg {
+            width: 400px;
+            margin-right: 50px;
+        }
+
+        .intrCnt {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ctg {
+            position: relative;
+            display: block;
+            height: 36px;
+            margin: 12px 0 12px 6px;
+            padding: 0 12px;
+            border-radius: 36px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 36px;
+            color: #222225;
+            letter-spacing: -.3px;
+            text-decoration: none;
+            background-color: #f7f7f9;
+        }
+
+        .intrMng {
+            width: 1200px;
+            display: flex;
+        }
+
+        .btnMng {
+            margin-left: auto;
+        }
+    </style>
 </head>
 
 <body>
-<div>
-    <div>
-        <img src="이미지 받아오기">
+    <!-- 소모임 소개 -->
+    <div class="intr">
+        <img class="intrImg" src="https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg">
+        <div class="intrCnt">
+            <h2>소모임 이름</h2>
+            <p>소모임 설명</p>
+            <div class="ctg">
+                <span>카테고리</span>
+            </div>
+        </div>
     </div>
-    <div>
-        
+
+    <!-- 소모임 소개 수정 & 삭제 -->
+    <div class="intrMng">
+        <div class="btnMng">
+            <button type="button">수정</button>
+            <button type="button" id="groupDel">삭제</button>
+        </div>
     </div>
-</div>
+
+
+    <!-- 댓글 -->
+    <div>
+        <div class="intrMng">
+            <div>
+                <input type="text" name="replyCnt" id="replyCnt">
+            </div>
+            <button type="button" name="replyRgstBtn" id="replyRgstBtn">등록</button>
+        </div>
+        <div class="cmt" id="cmt">
+            <!-- 댓글 형식 -->
+            <div>
+                <p>댓글 내용</p>
+                <div>
+                    <button type="button">수정</button>
+                    <button type="button">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 
