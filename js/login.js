@@ -43,8 +43,10 @@ document.addEventListener("DOMContentLoaded", () => {
     container.classList.add("sign-in");
   }, 200);
 
-  // 회원가입 버튼 이벤트 핸들러
+  const signInBtn = document.getElementById("sign-in-btn");
   const signUpBtn = document.getElementById("sign-up-btn");
+
+  // 회원가입 버튼 이벤트 핸들러
   if (signUpBtn) {
     signUpBtn.addEventListener("click", async () => {
       const id = document.getElementById("sign-up-id").value;
@@ -62,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
 
-          // 중복 ID가 아니라면 회원가입 진행행
+          // 중복 ID가 아니라면 회원가입 진행
           const docRef = await addDoc(collection(db, "members"), {
             id,
             password
@@ -72,6 +74,49 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {
           console.error("Error during sign up:", e);
           alert("회원가입에 실패했습니다.");
+        }
+      } else {
+        0
+        alert("ID와 Password를 입력해주세요.");
+      }
+    });
+  }
+
+  // 로그인 버튼 이벤트 핸들러
+  if (signInBtn) {
+    signInBtn.addEventListener("click", async () => {
+      const id = document.getElementById("sign-in-id").value;
+      const password = document.getElementById("sign-in-password").value;
+
+      if (id && password) {
+        try {
+          const memberCollection = collection(db, "members");
+          const q = query(memberCollection, where("id", "==", id));
+          const querySnapshot = await getDocs(q);
+
+          if (querySnapshot.empty) {
+            alert("ID가 존재하지 않습니다.");
+            return;
+          }
+
+          let isAuthenticated = false;
+          querySnapshot.forEach((doc) => {
+            const userData = doc.data();
+            // 비밀번호가 같은지 확인
+            if (userData.password === password) {
+              isAuthenticated = true;
+            }
+          });
+
+          if (isAuthenticated) {
+            alert("로그인 성공!");
+            window.location.href = "/group.html";
+          } else {
+            alert("비밀번호가 올바르지 않습니다.");
+          }
+        } catch (e) {
+          console.error("Error during sign in:", e);
+          alert("로그인에 실패했습니다.");
         }
       } else {
         alert("ID와 Password를 입력해주세요.");
