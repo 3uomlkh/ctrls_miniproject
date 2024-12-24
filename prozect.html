@@ -58,38 +58,31 @@
         const db = getFirestore(app);
 
         $("#postingbtn").click(async function () {
-            try {
-                let title = $('#title').val();
-                let contents = $('#contents').val();
-                let image = $('#image').val();
-                let category = $('#category').val();
+    try {
+        let title = $('#title').val();
+        let contents = $('#contents').val();
+        let image = $('#image').val();
+        let category = $('#category').val();
 
-                const counterRef = doc(db, "counter", "groupCounter");
-                const counterDoc = await getDoc(counterRef);
+        let groupDocs = await getDocs(collection(db, "group"));
+        let newGroupId = groupDocs.size > 0 
+            ? Math.max(...groupDocs.docs.map(doc => doc.data().groupId)) + 1 
+            : 1;
 
-                let newGroupId;
-                if (!counterDoc.exists()) {
-                    newGroupId = 1;
-                    await setDoc(counterRef, { count: newGroupId });
-                } else {
-                    newGroupId = counterDoc.data().count + 1;
-                    await updateDoc(counterRef, { count: newGroupId });
-                }
-
-                await addDoc(collection(db, "group"), {
-                    title: title,
-                    contents: contents,
-                    image: image,
-                    category: category,
-                    groupId: newGroupId
-                });
-
-                alert('소모임 등록 완료!');
-                window.location.reload();  
-            } catch (error) {
-                alert('등록 중 오류 발생: ' + error.message);
-            }
+        await addDoc(collection(db, "group"), {
+            title: title,
+            contents: contents,
+            image: image,
+            category: category,
+            groupId: newGroupId
         });
+
+        alert('소모임 등록 완료!');
+        window.location.reload();
+    } catch (error) {
+        alert('등록 중 오류 발생: ' + error.message);
+    }
+});
 
         $(document).ready(async function () {
             let docs = await getDocs(collection(db, "group"));
