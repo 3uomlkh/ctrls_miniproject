@@ -21,18 +21,31 @@
     </style>
 
     <script>
-        function really() {
-            confirm("진짜 지우시게요?ㅜㅅㅜ");
-        }
-        function movePage() {
-        window.location.assign('https://example.com');
-    }
+        
     </script>
 </head>
 
 <body>
-    <span class="d-block p-2 text-bg-dark">상세 페이지</span>
-   
+    <div class="text-bg-warning p-3">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Home</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <select id='dropdown'>
+                    <option value='영화'>영화</option>
+                    <option value='운동'>운동</option>
+                    <option value='게임'>게임</option>
+                    <option value='여행'>여행</option>
+                </select>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center">
@@ -57,8 +70,8 @@
                     </div>
 
                     <div class="buttons">
-                        <button onclick="movePage()" type="button" class="btn btn-warning">수정</button>
-                        <button onclick="really()" type="button" class="btn btn-danger">삭제</button>
+                        <button type="button" class="btn btn-warning">수정</button>
+                        <button type="button" class="btn btn-danger">삭제</button>
                     </div>
                 </div>
             </div>
