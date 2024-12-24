@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           console.log("Member signed up with ID:", docRef.id);
           alert("회원가입 성공!");
+
         } catch (e) {
           console.error("Error during sign up:", e);
           alert("회원가입에 실패했습니다.");
@@ -110,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (isAuthenticated) {
             alert("로그인 성공!");
-            window.location.href = "/group.html";
+            window.location.href = "/prozect.html";
           } else {
             alert("비밀번호가 올바르지 않습니다.");
           }
