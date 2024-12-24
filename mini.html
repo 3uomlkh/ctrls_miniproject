@@ -29,10 +29,11 @@
 
         // 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
         let groupIdNow = '받아온 그룹 아이디';
+        let memberId = '세션에서 받아온 아이디';
 
         // 소모임 소개
         let groupQ = query(collection(db, "group"), where("groupId", "==", 1)); // 그룹 아이디가 일치하는 문서만 불러온다 // 추후 그룹아이디만 바꾸면 됨
-        if (groupQ != null) {// 어차피 안비어있음 나중에 다른 조건으로 수정하는게 좋을듯
+        if (groupQ != null) {// 어차피 여기서 체크 안됨 나중에 다른 조건으로 수정하는게 좋을듯
             let querySnapshot = await getDocs(groupQ);
             let docSnapshot = querySnapshot.docs[0];
             let row = docSnapshot.data();
@@ -57,47 +58,102 @@
         }
 
         // 댓글 불러오기
-        let cmtQ = query(collection(db, "reply"), where("groupId", "==", groupIdNow)); // 그룹 아이디가 일치하는 문서만 불러온다
+        let cmtQ = query(collection(db, "reply"), where("groupId", "==", 1)); // 그룹 아이디가 일치하는 댓글만 불러온다
         let docs = await getDocs(cmtQ);
         docs.forEach((doc) => {
             let row = doc.data();
 
+            let replyId = doc.id;
             let groupId = row['groupId'];
             let contents = row['contents'];
             let createId = row['createId'];
 
+            // if (createId == memberid) {
             let temp_html = `
-            <div>
-                <p>${contents}</p>
-                <div>
-                    <button type="button">수정</button>
-                    <button type="button">삭제</button>
-                </div>
-            </div>`;// 이후 시간 남으면 댓글의 createId와 세션의 id값을 비교해서 일치할 경우 수정 삭제 버튼을 보이게 하고 누를 수 있게 할 예정
+                    <div class = intr>
+                        <p id="${replyId}">${contents}</p>
+
+                        <div>
+                            <button type="button" id="cmtRegBtn">수정</button>
+                            <button type="button" id="cmtDelBtn">삭제</button>
+                        </div>
+                    </div>`;
+            // } else {
+            //     let temp_html = `
+            //         <div class = intr>
+            //             <p>${contents}</p>
+            //         </div>`;
+            // }
             $('#cmt').append(temp_html);
         });
 
         // 댓글 등록
         $("#replyRgstBtn").click(async function () {
-            if (sessionStorage.getItem('memberId') != null) {
-                let groupId = groupIdNow;// 페이지 이동시 받아옴
-                let replyCnt = $('#replyCnt').val();
-                let createId = sessionStorage.getItem('memberId');
+            // if (sessionStorage.getItem('memberId') != null) {
+            let groupId = 1;// 페이지 이동시 받아옴
+            let replyCnt = $('#replyCnt').val();
+            let createId = sessionStorage.getItem('memberId');// 세션에서 받아온 멤버id
 
-                let doc = {
-                    'groupId': groupId,
-                    'contents': replyCnt,
-                    'createId ': createId
-                };
-                await addDoc(collection(db, "reply"), doc);
+            let doc = {
+                'groupId': groupId,
+                'contents': replyCnt,
+                'createId ': createId
+            };
+            await addDoc(collection(db, "reply"), doc);
 
-                alert('댓글 등록!');
-                window.location.reload();
-            } else {
-                alert('로그인을 해주세요!!');
-                //로그인 화면으로 추후 사이트 주소 나오면 작성 예정
-            }
+            alert('댓글 등록!');
+            window.location.reload();
+            // } else {
+            //     alert('로그인을 해주세요!!');
+            //     //로그인 화면으로 추후 사이트 주소 나오면 작성 예정
+            // }
         })
+
+        // 댓글 수정으로 변환
+        $('#cmt').on('click', '#cmtRegBtn', function () {
+            let modiCmtTag = $(this).parent().parent().closest('div').find('p'); // 클릭한 버튼에서 상위 한번 가까운 'p' 태그
+            console.log(modiCmtTag);
+            // 'p' 태그를 'input'으로 변경
+            let inputField = $('<input>', { type: 'text', value: modiCmtTag.text(), id: modiCmtTag.attr('id')});
+            modiCmtTag.replaceWith(inputField); // 'p' 태그를 'input'으로 교체
+
+            let cmtCmplBtn = $(this);
+            cmtCmplBtn.text('완료').attr('id', 'cmtcmplBtn');
+            console.log(cmtCmplBtn);
+
+            let cmtCancleBtn = $(this).next('button');
+            cmtCancleBtn.text('취소').attr('id', 'modiCancleBtn');
+            console.log(cmtCancleBtn);
+        });
+
+        // 댓글 수정
+        $('#cmt').on('click', '#cmtcmplBtn', function () {
+            let modiCmtCnt = $(this).parent().parent().closest('div').find('input').val();
+            console.log(modiCmtCnt);
+
+            //let groupId = groupIdNow;// 페이지 이동시 받아옴
+            //let titleCnt = $('#titleCnt').val();
+            //let imageCnt = $('#imageCnt').val();
+            //let contentsCnt = $('#contentsCnt').val();
+            //let categoryCnt = $('#categoryCnt').val();
+
+            //let querySnapshot = await getDocs(groupQ);
+            //let docRef = querySnapshot.docs[0].ref;
+           // await updateDoc(docRef, {
+            //    'category': categoryCnt,
+           //     'title': titleCnt,
+           //     'contents': contentsCnt,
+            //    'image': imageCnt
+            //});
+
+            alert('수정되었습니다!');
+            window.location.reload();
+        });
+
+        // 댓글 삭제
+        $('#cmt').on('click', '#modiCancleBtn', function () {
+            window.location.reload();
+        });
 
         // 소모임 삭제
         $("#groupDel").click(async function () {
