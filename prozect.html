@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>소모임</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> <!-- Remove older version -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
@@ -42,10 +41,8 @@
     </style>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
@@ -61,44 +58,65 @@
         const db = getFirestore(app);
 
         $("#postingbtn").click(async function () {
-            let title = $('#title').val();
-            let content = $('#content').val();
-            let image = $('#image').val();
-            let categorie = $('#categorie').val();
+            try {
+                let title = $('#title').val();
+                let contents = $('#contents').val();
+                let image = $('#image').val();
+                let category = $('#category').val();
 
-            let doc = {
-                'title': title,
-                'content': content,
-                'image': image,
-                'categorie': categorie
-            };
-            await addDoc(collection(db, "somoim"), doc);
-            alert('등록 완료');
-            window.location.reload();
-        })
-        let docs = await getDocs(collection(db, "somoim"));
-        docs.forEach((doc) => {
-            let row = doc.data();
-            console.log(row);
-            let title = row['title'];
-            let content = row['content'];
-            let image = row['image']
-            let categorie = row['categorie'];
+                const counterRef = doc(db, "counter", "groupCounter");
+                const counterDoc = await getDoc(counterRef);
 
-            let temp_html = `
-            <div class="col">
-                <div class="card">
-                    <img src="${image}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">${title}</h5>
-                        <p class="card-text">${content}</p>
-                        <button type="button" class="btn btn-outline-dark">상세 페이지</button>
+                let newGroupId;
+                if (!counterDoc.exists()) {
+                    newGroupId = 1;
+                    await setDoc(counterRef, { count: newGroupId });
+                } else {
+                    newGroupId = counterDoc.data().count + 1;
+                    await updateDoc(counterRef, { count: newGroupId });
+                }
+
+                await addDoc(collection(db, "group"), {
+                    title: title,
+                    contents: contents,
+                    image: image,
+                    category: category,
+                    groupId: newGroupId
+                });
+
+                alert('소모임 등록 완료!');
+                window.location.reload();  
+            } catch (error) {
+                alert('등록 중 오류 발생: ' + error.message);
+            }
+        });
+
+        $(document).ready(async function () {
+            let docs = await getDocs(collection(db, "group"));
+            let index = 1;
+            docs.forEach((doc) => {
+                let row = doc.data();
+                let title = row['title'];
+                let contents = row['contents'];
+                let image = row['image'];
+                let category = row['category'];
+
+                let temp_html = `
+                <div class="col" id="card${index}">
+                    <div class="card">
+                        <img src="${image}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">${title}</h5>
+                            <p class="card-text">${contents}</p>
+                            <p class="card-text">${category}</p>
+                            <button type="button" class="btn btn-outline-dark">상세 페이지</button>
+                        </div>
                     </div>
-                </div>
-            </div>`;
-            $('#card').append(temp_html);
-        })
-
+                </div>`;
+                $('#card').append(temp_html);
+                index++;
+            });
+        });
     </script>
 </head>
 
@@ -107,27 +125,29 @@
     <div class="texting">
         <div class="mypostingbox">
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="title" placeholder="name@example.com">
+                <input type="text" class="form-control" id="title" placeholder="Title">
                 <label for="floatingInput">제목</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="content" placeholder="name@example.com">
+                <input type="text" class="form-control" id="contents" placeholder="Description">
                 <label for="floatingInput">설명</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="image" placeholder="name@example.com">
+                <input type="text" class="form-control" id="image" placeholder="Image URL">
                 <label for="floatingInput">사진</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="categorie" placeholder="name@example.com">
+                <input type="text" class="form-control" id="category" placeholder="Category">
                 <label for="floatingInput">카테고리</label>
             </div>
         </div>
         <button id="postingbtn" type="button" class="btn btn-outline-dark">소모임 등록</button>
     </div>
+
     <div class="cards">
-        <div id="card" class="row row-cols-1 row-cols-md-4 g-4">     
+        <div id="card" class="row row-cols-1 row-cols-md-4 g-4">
         </div>
+    </div>
 </body>
 
 </html>
