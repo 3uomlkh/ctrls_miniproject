@@ -10,7 +10,7 @@
         // Firebase SDK 라이브러리 가져오기
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { collection, addDoc, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc, query, where, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -27,32 +27,38 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 댓글 등록
-        $("#replyRgstBtn").click(async function () {
-            if (sessionStorage.getItem('memberId') != null) {
-                let groupId = 0;// 페이지 이동시 받아옴
-                let replyCnt = $('#replyCnt').val();
-                let createId = sessionStorage.getItem('memberId');
+        // 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
+        let groupIdNow = '받아온 그룹 아이디';
 
-                let doc = {
-                    'groupId': groupId,
-                    'contents': replyCnt,
-                    'createId ': createId
-                };
-                await addDoc(collection(db, "reply"), doc);
+        // 소모임 소개
+        let groupQ = query(collection(db, "group"), where("groupId", "==", 1)); // 그룹 아이디가 일치하는 문서만 불러온다 // 추후 그룹아이디만 바꾸면 됨
+        if (groupQ != null) {// 어차피 안비어있음 나중에 다른 조건으로 수정하는게 좋을듯
+            let querySnapshot = await getDocs(groupQ);
+            let docSnapshot = querySnapshot.docs[0];
+            let row = docSnapshot.data();
 
-                alert('댓글 등록!');
-                window.location.reload();
-            } else {
-                alert('로그인을 해주세요!!');
-                //로그인 화면으로 추후 사이트 주소 나오면 작성 예정
-            }
-        })
+            let category = row['category'];
+            let title = row['title'];
+            let contents = row['contents'];
+            let image = row['image'];
+
+            let temp_html = `
+            <div class="intr" id="intr">
+                <img class="intrImg" src="${image}">
+                <div class="intrCnt" id="intrCnt">
+                    <h2>${title}</h2>
+                    <p>${contents}</p>
+                    <div class="ctg">
+                        <span>${category}</span>
+                    </div>
+                </div>
+            </div>`;
+            $('#intrBox').append(temp_html);
+        }
 
         // 댓글 불러오기
-        let groupIdNow = '받아온 그룹 아이디';// 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
-        let q = query(collection(db, "reply"), where("groupId", "==", groupIdNow)); // 그룹 아이디가 일치하는 문서만 불러온다
-        let docs = await getDocs(q);
+        let cmtQ = query(collection(db, "reply"), where("groupId", "==", groupIdNow)); // 그룹 아이디가 일치하는 문서만 불러온다
+        let docs = await getDocs(cmtQ);
         docs.forEach((doc) => {
             let row = doc.data();
 
@@ -71,13 +77,94 @@
             $('#cmt').append(temp_html);
         });
 
-        // 소모임 삭제
-        $("#groupDel").click(async function () {
-            let groupSlc = db.collection('group').where("groupId", "==", groupIdNow).get().then().catch();
+        // 댓글 등록
+        $("#replyRgstBtn").click(async function () {
+            if (sessionStorage.getItem('memberId') != null) {
+                let groupId = groupIdNow;// 페이지 이동시 받아옴
+                let replyCnt = $('#replyCnt').val();
+                let createId = sessionStorage.getItem('memberId');
 
-           
+                let doc = {
+                    'groupId': groupId,
+                    'contents': replyCnt,
+                    'createId ': createId
+                };
+                await addDoc(collection(db, "reply"), doc);
+
+                alert('댓글 등록!');
+                window.location.reload();
+            } else {
+                alert('로그인을 해주세요!!');
+                //로그인 화면으로 추후 사이트 주소 나오면 작성 예정
+            }
         })
 
+        // 소모임 삭제
+        $("#groupDel").click(async function () {
+            let checkDel = confirm("정말 삭제하시겠습니까?");
+            if (checkDel) {
+                let q = query(collection(db, "group"), where("groupId", "==", groupIdNow)); // 그룹 아이디가 일치하는 문서만 불러온다
+                let querySnapshot = await getDocs(q);
+                let docSnapshot = querySnapshot.docs[0];
+                await deleteDoc(doc(db, "group", docSnapshot.id));
+                alert('삭제되었습니다!');
+                //바탕화면으로 이동 이후 주소 나오면 작성예정
+            }
+        })
+
+        // 소모임 수정화면으로 변경
+        $("#groupModified").click(async function () {
+            $("#intrCnt").remove();
+
+            let querySnapshot = await getDocs(groupQ);
+            let docSnapshot = querySnapshot.docs[0];
+            let row = docSnapshot.data();
+
+            let category = row['category'];
+            let title = row['title'];
+            let contents = row['contents'];
+            let image = row['image'];
+
+            let temp_html = `
+            <div>
+                <form class="intrCnt">
+                    제목 <input type="text" id="titleCnt" value="${title}">
+                    이미지 <input type="text" id="imageCnt" value="${image}">
+                    소개 <input type="text" id="contentsCnt" value="${contents}">
+                    카테고리 <input type="text" id="categoryCnt" value="${category}">
+                </form>
+                <button type="button" id="modifiedBtn">수정완료</button>
+                <button type="button" id="cancleBtn">수정취소</button>
+            </div>`;
+            $('#intr').append(temp_html);
+        })
+
+        // 소모임 수정 완료 버튼
+        $(document).on("click", "#modifiedBtn", async function () {
+            let groupId = groupIdNow;// 페이지 이동시 받아옴
+            let titleCnt = $('#titleCnt').val();
+            let imageCnt = $('#imageCnt').val();
+            let contentsCnt = $('#contentsCnt').val();
+            let categoryCnt = $('#categoryCnt').val();
+
+            let querySnapshot = await getDocs(groupQ);
+            let docRef = querySnapshot.docs[0].ref;
+            await updateDoc(docRef, {
+                'category': categoryCnt,
+                'title': titleCnt,
+                'contents': contentsCnt,
+                'image': imageCnt
+            });
+
+            alert('수정되었습니다!');
+            window.location.reload();
+        })
+
+        // 소모임 수정 취소 버튼
+        $(document).on("click", "#cancleBtn", function () {
+            alert('check');
+            window.location.reload();
+        })
 
     </script>
     <style>
@@ -125,21 +212,24 @@
 
 <body>
     <!-- 소모임 소개 -->
-    <div class="intr">
-        <img class="intrImg" src="https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg">
-        <div class="intrCnt">
-            <h2>소모임 이름</h2>
-            <p>소모임 설명</p>
-            <div class="ctg">
-                <span>카테고리</span>
+    <div id="intrBox">
+        <!-- <div class="intr" id="intr">
+            <img class="intrImg" src="https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg">
+            <div class="intrCnt" id="intrCnt">
+                <h2>소모임 이름</h2>
+                <p>소모임 설명</p>
+                <div class="ctg">
+                    <span>카테고리</span>
+                </div>
             </div>
-        </div>
+        </div> -->
     </div>
+
 
     <!-- 소모임 소개 수정 & 삭제 -->
     <div class="intrMng">
         <div class="btnMng">
-            <button type="button">수정</button>
+            <button type="button" id="groupModified">수정</button>
             <button type="button" id="groupDel">삭제</button>
         </div>
     </div>
@@ -164,6 +254,16 @@
             </div>
         </div>
     </div>
+    <!-- <div>
+        <form class="intrCnt">
+            <input type="text" value="이전내용들">
+            <input type="text" value="이전내용들">
+            <input type="text" value="이전내용들">
+            <input type="text" value="이전내용들">
+            <button type="button" id="modifiedBtn">수정완료</button>
+            <button type="button" id="cancleBtn">수정취소</button>
+        </form>
+    </div> -->
 
 </body>
 
