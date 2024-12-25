@@ -114,7 +114,7 @@
             let modiCmtTag = $(this).parent().parent().closest('div').find('p'); // 클릭한 버튼에서 상위 한번 가까운 'p' 태그
             console.log(modiCmtTag);
             // 'p' 태그를 'input'으로 변경
-            let inputField = $('<input>', { type: 'text', value: modiCmtTag.text(), id: modiCmtTag.attr('id')});
+            let inputField = $('<input>', { type: 'text', value: modiCmtTag.text(), id: modiCmtTag.attr('id') });
             modiCmtTag.replaceWith(inputField); // 'p' 태그를 'input'으로 교체
 
             let cmtCmplBtn = $(this);
@@ -127,32 +127,35 @@
         });
 
         // 댓글 수정
-        $('#cmt').on('click', '#cmtcmplBtn', function () {
-            let modiCmtCnt = $(this).parent().parent().closest('div').find('input').val();
-            console.log(modiCmtCnt);
+        $('#cmt').on('click', '#cmtcmplBtn', async function () {
+            let modiCmt = $(this).parent().parent().closest('div').find('input');
 
-            //let groupId = groupIdNow;// 페이지 이동시 받아옴
-            //let titleCnt = $('#titleCnt').val();
-            //let imageCnt = $('#imageCnt').val();
-            //let contentsCnt = $('#contentsCnt').val();
-            //let categoryCnt = $('#categoryCnt').val();
+            let modiCnt = modiCmt.val();
+            let modiId = modiCmt.attr('id');
 
-            //let querySnapshot = await getDocs(groupQ);
-            //let docRef = querySnapshot.docs[0].ref;
-           // await updateDoc(docRef, {
-            //    'category': categoryCnt,
-           //     'title': titleCnt,
-           //     'contents': contentsCnt,
-            //    'image': imageCnt
-            //});
+            const replyModi = doc(db, "reply", modiId);
 
+            await updateDoc(replyModi, {
+                contents: modiCnt
+            });
+            
             alert('수정되었습니다!');
             window.location.reload();
         });
 
-        // 댓글 삭제
+        // 댓글 수정 취소
         $('#cmt').on('click', '#modiCancleBtn', function () {
             window.location.reload();
+        });
+
+        // 댓글 삭제
+        $('#cmt').on('click', '#cmtDelBtn', async function () {
+            let check = confirm('댓글을 삭제하시겠습니까?');
+            if(check){
+                let modiCmtid = $(this).parent().parent().closest('div').find('p').attr('id');
+                await deleteDoc(doc(db, "reply", modiCmtid));
+                window.location.reload();
+            }
         });
 
         // 소모임 삭제
@@ -218,7 +221,6 @@
 
         // 소모임 수정 취소 버튼
         $(document).on("click", "#cancleBtn", function () {
-            alert('check');
             window.location.reload();
         })
 
