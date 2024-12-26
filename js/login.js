@@ -54,14 +54,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (id && password) {
         try {
+          const errorDiv = document.getElementById("sign-up-error");
+
           // 중복 ID 체크
           const memberCollection = collection(db, "members");
           const q = query(memberCollection, where("id", "==", id));
           const querySnapshot = await getDocs(q);
 
           if (!querySnapshot.empty) {
-            alert("이미 존재하는 ID입니다. 다른 ID를 사용해주세요.");
+            errorDiv.innerText = "이미 존재하는 ID입니다. 다른 ID를 사용해주세요.";
+            errorDiv.style.display = "block"; // 메시지 표시
             return;
+          } else {
+            errorDiv.style.display = "none"; // 에러 없으면 숨기기
           }
 
           // 중복 ID가 아니라면 회원가입 진행
