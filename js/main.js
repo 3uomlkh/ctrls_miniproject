@@ -46,7 +46,7 @@ $(document).on("click", ".detail-btn", function () {
 function makeGroupCards(groupArr) {
     $('#card-container').empty();
     groupArr.forEach(group => {
-        let image = group.image != '' ? group.image : `assets/images/noImage.png`;
+        let image = group.image != '' ? group.image : `./assets/images/noImage.png`;
         let temp_html = `
         <div class="col mb-5">
             <div class="card h-100">
