@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (isAuthenticated) {
             alert("로그인 성공!");
-            window.location.href = "ctrls_miniproject/prozect.html";
+            window.location.href = "ctrls_miniproject/main.html";
           } else {
             alert("비밀번호가 올바르지 않습니다.");
           }
@@ -125,4 +125,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
