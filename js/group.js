@@ -1,7 +1,7 @@
 // Firebase SDK import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
@@ -72,7 +72,7 @@ export async function selectGroup(groupId) {
 }
 
 // Group 수정
-export async function updateGroup(groupId, title, contents, image, category, modId) {
+export async function updateGroup(groupId, title, contents, image, category) {
     try {
         let groupQ = query(collection(db, "group"), where("groupId", "==", groupId)); // 그룹 아이디가 일치하는 문서만 불러온다
         let querySnapshot = await getDocs(groupQ);
@@ -106,6 +106,7 @@ export async function deleteGroup(groupId) {
             window.location.href = context + "/main.html";
         }
     } catch (err) {
-        
+        console.log("deleteGroup 에러 발생", err);
+        return;
     }
 }
