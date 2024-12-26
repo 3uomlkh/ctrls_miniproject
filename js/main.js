@@ -1,5 +1,5 @@
 import { getCategorys, selectCategory } from "./category.js";
-import { getGroups, insertGroup } from "./group.js"
+import { getGroups, insertGroup } from "./group.js";
 
 // 전역변수 index
 let index = 1;
@@ -37,12 +37,12 @@ $("#postingbtn").click(async function () {
     insertGroup(title, contents, image, category);
 });
 
-/* 소모임 상세 페이지 이동 */
-$(".detail-btn").click(async function () {
+/* 상세페이지 이동 */
+$(document).on("click", ".detail-btn", function () {
     const groupId = $(this).data('id');
     window.location.href = `detail.html?id=${groupId}`;
 });
-
+/* 상세 페이지 버튼 활성화 */
 function makeGroupCards(groupArr) {
     $('#card-container').empty();
     groupArr.forEach(group => {
