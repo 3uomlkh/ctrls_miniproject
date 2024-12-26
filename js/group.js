@@ -39,8 +39,9 @@ export async function insertGroup(title, contents, image, category) {
     try {
         let groupDocs = await getDocs(collection(db, "group"));
         let newGroupId = groupDocs.size > 0
-            ? Math.max(...groupDocs.docs.map(doc => doc.data().groupId)) + 1
+            ? Math.max(...groupDocs.docs.map(doc => Number(doc.data().groupId))) + 1
             : 1;
+            newGroupId += "";
 
         await addDoc(collection(db, "group"), {
             title: title,

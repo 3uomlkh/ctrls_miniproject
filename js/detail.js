@@ -9,37 +9,97 @@ const globalMemberId = sessionStorage.getItem('memberId');
 let replyGroup = await getReply(globalGroupId);
 replyGroup.forEach((doc) => {
     let replyId = doc.id;
-    let groupId = doc.groupId;
     let contents = doc.contents;
     let createId = doc.createId;
 
     // if (createId == memberid) { // 멤버 아이디 유지해서 시험하기 번거로워서 임시 주석처리
+
+    
     let temp_html = `
-                <div class = "testStyle">
-                    <div class = "intr">
-                        <span>${createId}</span>
+        <div class="d-flex mb-4">
+            <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
+                    alt="..." /></div>
+            <div class="input-group">
+                <div class="ms-3">
+                    <div class="fw-bold" id="${replyId}">
+                        ${createId}
                         <button type="button" id="cmtRegBtn">수정</button>
                         <button type="button" id="cmtDelBtn">삭제</button>
                     </div>
-                    <p id="${replyId}">${contents}</p>
-                </div>`;
-    //} else {
-    //    let temp_html = `
-    //        <div class = "testStyle">
-    //            <div class = "intr">
-    //                <span>${createId}</span>
-    //            </div>
-    //            <p>${contents}</p>
-    //        </div>`;
-    //}
+                    ${contents}
+                </div>
+            </div>
+        </div>`;
+    // } else {
+    //     let temp_html = `
+    //         <div class="d-flex mb-4">
+    //             <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
+    //                     alt="..." /></div>
+    //             <div class="input-group">
+    //                 <div class="ms-3">
+    //                     <div class="fw-bold" id="${replyId}">
+    //                         ${createId}
+    //                     </div>
+    //                     ${contents}
+    //                 </div>
+    //             </div>
+    //         </div>`;
+    // }
     $('#cmt').append(temp_html);
+
+
+    // // if (createId == memberid) { // 멤버 아이디 유지해서 시험하기 번거로워서 임시 주석처리
+    // let temp_html = `
+    //             <div class = "testStyle">
+    //                 <div class = "intr">
+    //                     <span>${createId}</span>
+    //                     <button type="button" id="cmtRegBtn">수정</button>
+    //                     <button type="button" id="cmtDelBtn">삭제</button>
+    //                 </div>
+    //                 <p id="${replyId}">${contents}</p>
+    //             </div>`;
+    // //} else {
+    // //    let temp_html = `
+    // //        <div class = "testStyle">
+    // //            <div class = "intr">
+    // //                <span>${createId}</span>
+    // //            </div>
+    // //            <p>${contents}</p>
+    // //        </div>`;
+    // //}
+    // $('#cmt').append(temp_html);
 });
 
 // Group 불러오기
 
-let detailGroup = await selectGroup(1); //여기 변수가 너무 대놓고 나와있어서 조금 걸림
+let detailGroup = await selectGroup("1"); //여기 변수가 너무 대놓고 나와있어서 조금 걸림
 let temp_html = `
-            <div class="intr" id="intr">
+    <div class="row gx-4 gx-lg-5 align-items-center">
+        <div class="img-thumbnail col-md-4"><img class="card-img-top mb-5 mb-md-0" src="${detailGroup.image}" alt="..."></div>
+        <div class="col-md-8">
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="floatingInputDisabled" placeholder="name@example.com" disabled="">
+                <label for="floatingInputDisabled">${detailGroup.title}</label>
+            </div>
+            <div class="form-floating mb-3">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2Disabled" style="height: 100px" disabled="">${detailGroup.contents}</textarea>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="floatingInputDisabled" placeholder="name@example.com" disabled="">
+                <label for="floatingInputDisabled">${detailGroup.category}</label>
+            </div>
+        </div>
+        <div class="buttons">
+            <button type="button" class="btn btn-danger float-end ms-2">삭제</button>
+            <button type="button" class="btn btn-warning float-end ms-2">수정</button>
+            <button type="button" class="btn btn-primary float-start me-2" id="regGroupMemberBtn">가입</button>
+            <button type="button" class="btn btn-secondary float-start me-2" id="delGroupMemberBtn">탈퇴</button>
+        </div>
+    </div>`;
+
+
+
+{/* <div class="intr" id="intr">
                 <img class="intrImg" src="${detailGroup.image}">
                 <div class="intrCnt" id="intrCnt">
                     <h2>${detailGroup.title}</h2>
@@ -48,7 +108,7 @@ let temp_html = `
                         <span>${detailGroup.category}</span>
                     </div>
                 </div>
-            </div>`;
+            </div> */}
 
 $('#intrBox').append(temp_html);
 
@@ -61,7 +121,7 @@ $(document).ready(() => {
     $("#replyRgstBtn").click(async () => {
         const groupId = globalGroupId; // 페이지 이동 시 받아오는 그룹 ID 맨위에 선언
         const contents = $("#replyCnt").val();
-        const createId = globalMemberId; // 쿠키에서 가져온 멤버 ID 맨위에 선언
+        const createId = globalMemberId; // 세션에서 가져온 멤버 ID 맨위에 선언
 
         if (!contents) { // 비어있는지 확인
             alert("댓글 내용을 입력해주세요.");
@@ -72,19 +132,20 @@ $(document).ready(() => {
 
     // reply 수정으로 변환
     $('#cmt').on('click', '#cmtRegBtn', function () {
-        let modiCmtTag = $(this).parent().parent().closest('div').find('p'); // 클릭한 버튼에서 상위 한번 가까운 'p' 태그
+        let modiCmtTag = $(this).parent().parent().closest('div'); // 클릭한 버튼에서 상위 한번 가까운 'p' 태그
+        let asd = modiCmtTag.textContent;
         console.log(modiCmtTag);
         // 'p' 태그를 'input'으로 변경
-        let inputField = $('<input>', { type: 'text', value: modiCmtTag.text(), id: modiCmtTag.attr('id') });
-        modiCmtTag.replaceWith(inputField); // 'p' 태그를 'input'으로 교체
+        // let inputField = $('<input>', { type: 'text', value: modiCmtTag.text(), id: modiCmtTag.attr('id') });
+        // modiCmtTag.replaceWith(inputField); // 'p' 태그를 'input'으로 교체
 
-        let cmtCmplBtn = $(this);
-        cmtCmplBtn.text('완료').attr('id', 'cmtcmplBtn');
-        console.log(cmtCmplBtn);
+        // let cmtCmplBtn = $(this);
+        // cmtCmplBtn.text('완료').attr('id', 'cmtcmplBtn');
+        // console.log(cmtCmplBtn);
 
-        let cmtCancleBtn = $(this).next('button');
-        cmtCancleBtn.text('취소').attr('id', 'modiCancleBtn');
-        console.log(cmtCancleBtn);
+        // let cmtCancleBtn = $(this).next('button');
+        // cmtCancleBtn.text('취소').attr('id', 'modiCancleBtn');
+        // console.log(cmtCancleBtn);
     });
 
     $('#cmt').on('click', '#cmtcmplBtn', async function () {
@@ -157,14 +218,14 @@ $(document).ready(() => {
     })
 
     // group 가입하기
-    $("#regGroupMemberBtn").click(async function() {
+    $("#regGroupMemberBtn").click(async function () {
         if (globalGroupId && globalMemberId) {
             await insertGroupMember(globalGroupId, globalMemberId);
         }
     });
-    
+
     // group 탈퇴하기
-    $("#delGroupMemberBtn").click(async function() {
+    $("#delGroupMemberBtn").click(async function () {
         if (globalGroupId && globalMemberId) {
             await deleteGroupMember(globalGroupId, globalMemberId);
         }
@@ -174,11 +235,11 @@ $(document).ready(() => {
 
 selectGroupMember(globalGroupId, globalMemberId).then((groupMember) => {
     if (groupMember) {
-         $('#regGroupMemberBtn').hide();
-         $('#delGroupMemberBtn').show();
+        $('#regGroupMemberBtn').hide();
+        $('#delGroupMemberBtn').show();
     } else {
-         $('#regGroupMemberBtn').show();
-         $('#delGroupMemberBtn').hide();
+        $('#regGroupMemberBtn').show();
+        $('#delGroupMemberBtn').hide();
     }
- });
+});
 
