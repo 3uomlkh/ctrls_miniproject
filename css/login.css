@@ -246,6 +246,13 @@ body {
     transform: translateX(0);
 }
 
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none; /* 초기에는 숨김 */
+  }  
+
 /* BACKGROUND */
 
 .container::before {
