@@ -17,15 +17,15 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app)
 // 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
 const url = new URL(window.location.href);
-let groupIdNow = url.searchParams.get('id');
-let memberId = sessionStorage.getItem('memberId');
+let globalGroupId = url.searchParams.get('id');
+let globalMemberId = sessionStorage.getItem('memberId');
 
 // reply 데이터 불러오기
 
 export async function getReply(groupId) {
     try {
         let replyArr = [];
-        let cmtQ = query(collection(db, "reply"), where("groupId", "==", 1)); // 그룹 아이디가 일치하는 댓글만 불러온다
+        let cmtQ = query(collection(db, "reply"), where("groupId", "==", globalGroupId)); // 그룹 아이디가 일치하는 댓글만 불러온다
         let docs = await getDocs(cmtQ);
         docs.forEach((doc) => {
             replyArr.push({

@@ -14,6 +14,9 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="module" src="./js/detail.js"></script>
+    <script type="module" src="./js/reply.js"></script>
+    <script type="module" src="./js/group.js"></script>
 </head>
 
 <body>
@@ -35,35 +38,7 @@
     <!-- Product section-->
     <header class="bg-primary py-4">
         <section class="bg-white py-2">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="img-thumbnail col-md-4"><img class="card-img-top mb-5 mb-md-0"
-                            src="https://search.pstatic.net/sunny/?src=https%3A%2F%2Fdnvefa72aowie.cloudfront.net%2Forigin%2Fprofile%2F202011%2F6C1D820822F7D5CB55B875917AB03A0EBA71A598700208CF232E6EA512AC5590.jpg%3Fq%3D82%26s%3D640x640%26t%3Dcrop&type=sc960_832"
-                            alt="..." /></div>
-                    <div class="col-md-8">
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="floatingInputDisabled"
-                                placeholder="name@example.com" disabled>
-                            <label for="floatingInputDisabled">제목</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control" placeholder="Leave a comment here"
-                                id="floatingTextarea2Disabled" style="height: 100px" disabled>내용 설명</textarea>
-                            <label for="floatingTextarea2Disabled">내용</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="floatingInputDisabled"
-                                placeholder="name@example.com" disabled>
-                            <label for="floatingInputDisabled">카테고리</label>
-                        </div>
-                    </div>
-                    <div class="buttons">
-                        <button type="button" class="btn btn-danger float-end ms-2">삭제</button>
-                        <button type="button" class="btn btn-warning float-end ms-2">수정</button>
-                        <button type="button" class="btn btn-primary float-start me-2" id="regGroupMemberBtn">가입</button>
-                        <button type="button" class="btn btn-secondary float-start me-2" id="delGroupMemberBtn">탈퇴</button>
-                    </div>
-                </div>
+            <div id="intrBox" class="container px-4 px-lg-5 my-5">
             </div>
         </section>
     </header>
@@ -72,7 +47,7 @@
         <!-- Comments section-->
         <section class="mb-5">
             <div class="card bg-light">
-                <div class="card-body">
+                <div id="cmt" class="card-body">
                     <!-- Comment form-->
                     <div class="row gx-4 gx-lg-5 align-items-center">
                         <div class="input-group mb-3">
@@ -84,7 +59,7 @@
                     </div>
                     <!-- Comment with nested comments-->
                     <!-- Single comment-->
-                    <div class="d-flex mb-4">
+                    <!-- <div class="d-flex mb-4">
                         <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
                                 alt="..." /></div>
                         <div class="input-group">
@@ -95,7 +70,7 @@
                                 to reconcile that with statements of beneficence.
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </section>
