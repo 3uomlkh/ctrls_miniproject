@@ -46,8 +46,6 @@ $(document).on("click", ".detail-btn", function () {
 function makeGroupCards(groupArr) {
     $('#card-container').empty();
     groupArr.forEach(group => {
-        let dummy = 'https://dummyimage.com/450x300/dee2e6/6c757d.jpg';
-
         const truncateText = (text, maxLength) => {
             if (text.length > maxLength) {
                 return text.substring(0, maxLength) + "...";
@@ -56,14 +54,14 @@ function makeGroupCards(groupArr) {
         }
 
         let truncatedContents = truncateText(group.contents, 30);
-
+        let image = group.image != '' ? group.image : `./assets/images/noImage.png`;
         let temp_html = `
         <div class="col mb-5">
             <div class="card h-100">
                 <!-- Sale badge-->
                 <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">${group.category}</div>
                 <!-- Product image-->
-                <img class="card-img-top" src="${group.image}" alt="..." />
+                <img class="card-img-top" src="${image}" alt="..." />
                 <!-- Product details-->
                 <div class="card-body p-4">
                     <div class="text-center">
