@@ -36,10 +36,14 @@ export default categoryArr;
 
 export async function selectCategory(name) {
     try {
-        const groupCollection = collection(db, "group");
-        const q = query(groupCollection, where("category","==", name));
-        const querySnapShot = await getDocs(q);
-        // 검색 결과가 있는 경우 해당 그룹카드를 생성하여 화면에 출력
+        let categoryGroupArr = [];
+        let groupCollection = collection(db, "group");
+        let q = query(groupCollection, where("category", "==", name));
+        let querySnapShot = name!='' ? await getDocs(q) : await getDocs(groupCollection);
+        querySnapShot.forEach((doc) => {
+            categoryGroupArr.push(doc.data());
+        });
+        return categoryGroupArr;
     } catch (err) {
         console.log("selectCategory 에러 발생", err);
         return;
