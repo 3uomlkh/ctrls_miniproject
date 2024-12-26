@@ -90,3 +90,22 @@ export async function updateGroup(groupId, title, contents, image, category, mod
         return;
     }
 }
+
+// Group 삭제
+export async function deleteGroup(groupId) {
+    try {
+        let checkDel = confirm("정말 삭제하시겠습니까?");
+        if (checkDel) {
+            let q = query(collection(db, "group"), where("groupId", "==", groupId)); // 그룹 아이디가 일치하는 문서만 불러온다
+            let querySnapshot = await getDocs(q);
+            let docSnapshot = querySnapshot.docs[0];
+            await deleteDoc(doc(db, "group", docSnapshot.id));
+            alert('삭제되었습니다!');
+            var hostIndex = location.href.indexOf(location.host)+location.host.length;
+            var context = location.href.substring(hostIndex, location.href.indexOf('/', hostIndex + 1));
+            window.location.href = context + "/main.html";
+        }
+    } catch (err) {
+        
+    }
+}
