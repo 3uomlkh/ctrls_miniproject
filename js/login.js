@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (isAuthenticated) {
             alert("로그인 성공!");
+            sessionStorage.setItem('memberId', id);
             window.location.href = "./main.html";
           } else {
             alert("비밀번호가 올바르지 않습니다.");

@@ -16,8 +16,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app)
 // 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
-let groupIdNow = '받아온 그룹 아이디';
-let memberId = $.cookie('memberId');
+const url = new URL(window.location.href);
+let groupIdNow = url.searchParams.get('id');
+let memberId = sessionStorage.getItem('memberId');
 
 // reply 데이터 불러오기
 

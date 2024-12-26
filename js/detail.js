@@ -1,8 +1,12 @@
 import { insertReply, getReply, updateReply, deleteReply } from "./reply.js";
 import { selectGroup, deleteGroup, updateGroup } from "./group.js";
 
+const url = new URL(window.location.href);
+const globalGroupId = url.searchParams.get('id');
+const globalMemberId = sessionStorage.getItem('memberId');
+
 // reply 불러오기
-let replyGroup = await getReply(1);
+let replyGroup = await getReply(globalGroupId);
 replyGroup.forEach((doc) => {
     let replyId = doc.id;
     let groupId = doc.groupId;
@@ -55,9 +59,9 @@ $(document).ready(() => {
 
     // reply 등록
     $("#replyRgstBtn").click(async () => {
-        const groupId = 1; // 페이지 이동 시 받아오는 그룹 ID 맨위에 선언
+        const groupId = globalGroupId; // 페이지 이동 시 받아오는 그룹 ID 맨위에 선언
         const contents = $("#replyCnt").val();
-        const createId = 'test123123'; // 쿠키에서 가져온 멤버 ID 맨위에 선언
+        const createId = globalMemberId; // 쿠키에서 가져온 멤버 ID 맨위에 선언
 
         if (!contents) { // 비어있는지 확인
             alert("댓글 내용을 입력해주세요.");
@@ -152,6 +156,29 @@ $(document).ready(() => {
         window.location.reload();
     })
 
+    // group 가입하기
+    $("#regGroupMemberBtn").click(async function() {
+        if (globalGroupId && globalMemberId) {
+            await insertGroupMember(globalGroupId, globalMemberId);
+        }
+    });
+    
+    // group 탈퇴하기
+    $("#delGroupMemberBtn").click(async function() {
+        if (globalGroupId && globalMemberId) {
+            await deleteGroupMember(globalGroupId, globalMemberId);
+        }
+    });
 
 });
+
+selectGroupMember(globalGroupId, globalMemberId).then((groupMember) => {
+    if (groupMember) {
+         $('#regGroupMemberBtn').hide();
+         $('#delGroupMemberBtn').show();
+    } else {
+         $('#regGroupMemberBtn').show();
+         $('#delGroupMemberBtn').hide();
+    }
+ });
 
