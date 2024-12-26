@@ -17,7 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Group 데이터 
+// Groups 불러오기
 let groupArr = [];
 export async function getGroups() {
     try {
@@ -54,5 +54,58 @@ export async function insertGroup(title, contents, image, category) {
         window.location.reload();
     } catch (error) {
         alert('등록 중 오류 발생: ' + error.message);
+    }
+}
+
+// Group 조회 
+export async function selectGroup(groupId) {
+    try {
+        let groupQ = query(collection(db, "group"), where("groupId", "==", groupId)); // 그룹 아이디가 일치하는 문서만 불러온다
+        let querySnapshot = await getDocs(groupQ);
+        let docSnapshot = querySnapshot.docs[0];
+        let row = docSnapshot.data();
+        return row;
+    } catch (err) {
+        console.log("selectGroup 에러 발생", err);
+        return;
+    }
+}
+
+// Group 수정
+export async function updateGroup(groupId, title, contents, image, category, modId) {
+    try {
+        let groupQ = query(collection(db, "group"), where("groupId", "==", groupId)); // 그룹 아이디가 일치하는 문서만 불러온다
+        let querySnapshot = await getDocs(groupQ);
+        let docRef = querySnapshot.docs[0].ref;
+        await updateDoc(docRef, {
+            'category': category,
+            'title': title,
+            'contents': contents,
+            'image': image
+        });
+        alert('수정되었습니다!');
+        window.location.reload();
+    } catch (err) {
+        console.log("updateGroup 에러 발생", err);
+        return;
+    }
+}
+
+// Group 삭제
+export async function deleteGroup(groupId) {
+    try {
+        let checkDel = confirm("정말 삭제하시겠습니까?");
+        if (checkDel) {
+            let q = query(collection(db, "group"), where("groupId", "==", groupId)); // 그룹 아이디가 일치하는 문서만 불러온다
+            let querySnapshot = await getDocs(q);
+            let docSnapshot = querySnapshot.docs[0];
+            await deleteDoc(doc(db, "group", docSnapshot.id));
+            alert('삭제되었습니다!');
+            var hostIndex = location.href.indexOf(location.host)+location.host.length;
+            var context = location.href.substring(hostIndex, location.href.indexOf('/', hostIndex + 1));
+            window.location.href = context + "/main.html";
+        }
+    } catch (err) {
+        
     }
 }
