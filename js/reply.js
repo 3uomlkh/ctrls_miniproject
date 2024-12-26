@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { collection, addDoc, query, where, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"
+
 const firebaseConfig = {
     apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
     authDomain: "ctrls-miniproject.firebaseapp.com",
@@ -16,16 +17,20 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app)
 // 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
 let groupIdNow = '받아온 그룹 아이디';
-let memberId = '세션에서 받아온 아이디';
+let memberId = $.cookie('memberId');
 
 // reply 데이터 불러오기
-let replyArr = [];
+
 export async function getReply(groupId) {
     try {
+        let replyArr = [];
         let cmtQ = query(collection(db, "reply"), where("groupId", "==", 1)); // 그룹 아이디가 일치하는 댓글만 불러온다
         let docs = await getDocs(cmtQ);
         docs.forEach((doc) => {
-            replyArr.push(doc.data());
+            replyArr.push({
+                id: doc.id, // 댓글 ID
+                ...doc.data() // 댓글 데이터
+            });
         });
         return replyArr;
     } catch (err) {
@@ -34,12 +39,15 @@ export async function getReply(groupId) {
     }
 }
 
-// reply 등록 (attr: groupId, replyCnt, createId, contents)
-export async function insertReply(groupId, replyCnt, createId, contents) {
+// reply 등록 (attr: groupId, createId, contents)
+export async function insertReply(groupId, createId, contents) {
     try {
+        console.log('gr : '+groupId);
+        console.log('co : '+contents);
+        console.log('cr : '+createId);
         let doc = {
             'groupId': groupId,
-            'contents': replyCnt,
+            'contents': contents,
             'createId': createId
         }
         await addDoc(collection(db, "reply"), doc);
@@ -51,8 +59,8 @@ export async function insertReply(groupId, replyCnt, createId, contents) {
     }
 }
 
-// reply 수정 (attr: modiCmtId, modiCnt, modiId)
-export async function updateReply(modiCmtId, modiCnt, modiId) {
+// reply 수정 (attr: modiCnt, modiId)
+export async function updateReply(modiCnt, modiId) {
     try {
         const replyModi = doc(db, "reply", modiId);
         await updateDoc(replyModi, {
@@ -71,7 +79,7 @@ export async function deleteReply(modiCmtId) {
     try {
         let check = confirm('댓글을 삭제하시겠습니까?');
         if (check) {
-            await deleteDoc(doc(db, "reply", modiCmtid));
+            await deleteDoc(doc(db, "reply", modiCmtId));
             window.location.reload();
         }
     } catch (err) {
