@@ -39,7 +39,7 @@ getCategorys().then(async (categoryArr) => {
         <div class="buttons">
             <button type="button" class="btn btn-danger float-end ms-2 display-hide" id="groupDel">삭제</button>
             <button type="button" class="btn btn-warning float-end ms-2 display-hide" id="groupModified">수정</button>
-            <button type="button" class="btn btn-primary float-start me-2" id="regGroupMemberBtn">가입</button>
+            <button type="button" class="btn btn-primary float-start me-2 display-hide" id="regGroupMemberBtn">가입</button>
             <button type="button" class="btn btn-secondary float-start me-2 display-hide" id="delGroupMemberBtn">탈퇴</button>
         </div>
     </div>`;
@@ -51,9 +51,12 @@ getCategorys().then(async (categoryArr) => {
     // group 정보가 모두 출력되고 난 후 모임 가입/탈퇴 버튼 toggle
     selectGroupMember(globalGroupId, globalMemberId).then((groupMember) => {
         if (groupMember) {
-            $('#regGroupMemberBtn').toggle();
-            $('#delGroupMemberBtn').toggle();
             isGroupMember = true;
+            if (detailGroup.createId != globalMemberId) {
+                $("#delGroupMemberBtn").show();
+            }
+        } else {
+            $("#regGroupMemberBtn").show();
         }
     });
 
@@ -61,8 +64,7 @@ getCategorys().then(async (categoryArr) => {
     if ( detailGroup.createId == globalMemberId ) {
         $('#groupDel').toggle();
         $('#groupModified').toggle();
-        $('#delGroupMemberBtn').toggle(); // 그룹을 만든 유저는 탈퇴 불가능
-    }
+    } 
 
 
     // Group 수정화면으로 변경
