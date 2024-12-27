@@ -26,7 +26,7 @@ replyGroup.forEach((doc) => {
                         <button type="button" id="cmtRegBtn">수정</button>
                         <button type="button" id="cmtDelBtn">삭제</button>
                     </div>
-                    ${contents}
+                    <span id="${replyId}">${contents}</span>
                 </div>
             </div>
         </div>`;
@@ -74,7 +74,7 @@ replyGroup.forEach((doc) => {
 
 let detailGroup = await selectGroup("1"); //여기 변수가 너무 대놓고 나와있어서 조금 걸림
 let temp_html = `
-    <div class="row gx-4 gx-lg-5 align-items-center">
+    <div id="intrCnt" class="row gx-4 gx-lg-5 align-items-center">
         <div class="img-thumbnail col-md-4"><img class="card-img-top mb-5 mb-md-0" src="${detailGroup.image}" alt="..."></div>
         <div class="col-md-8">
             <div class="form-floating mb-3">
@@ -85,13 +85,13 @@ let temp_html = `
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2Disabled" style="height: 100px" disabled="">${detailGroup.contents}</textarea>
             </div>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInputDisabled" placeholder="name@example.com" disabled="">
+                <input type="email" class="form-control" id=" " placeholder="name@example.com" disabled="">
                 <label for="floatingInputDisabled">${detailGroup.category}</label>
             </div>
         </div>
         <div class="buttons">
-            <button type="button" class="btn btn-danger float-end ms-2">삭제</button>
-            <button type="button" class="btn btn-warning float-end ms-2">수정</button>
+            <button type="button" id="groupDel" class="btn btn-danger float-end ms-2">삭제</button>
+            <button type="button" id="groupModified" class="btn btn-warning float-end ms-2">수정</button>
             <button type="button" class="btn btn-primary float-start me-2" id="regGroupMemberBtn">가입</button>
             <button type="button" class="btn btn-secondary float-start me-2" id="delGroupMemberBtn">탈퇴</button>
         </div>
@@ -132,24 +132,25 @@ $(document).ready(() => {
 
     // reply 수정으로 변환
     $('#cmt').on('click', '#cmtRegBtn', function () {
-        let modiCmtTag = $(this).parent().parent().closest('div'); // 클릭한 버튼에서 상위 한번 가까운 'p' 태그
-        let asd = modiCmtTag.textContent;
-        console.log(modiCmtTag);
-        // 'p' 태그를 'input'으로 변경
-        // let inputField = $('<input>', { type: 'text', value: modiCmtTag.text(), id: modiCmtTag.attr('id') });
-        // modiCmtTag.replaceWith(inputField); // 'p' 태그를 'input'으로 교체
+        let modiCmtTag = $(this).parent().next('span'); // 클릭한 버튼에서 상위 한번 가까운 'p' 태그
+        let asd = modiCmtTag.text();
+        console.log(asd);
+        // 'span' 태그를 'textarea'으로 변경
+        let inputField = $('<textarea>', { class: 'form-control', rows: '2', text: asd, id: modiCmtTag.attr('id') });
+        modiCmtTag.replaceWith(inputField); // 'span' 태그를 'textarea'으로 교체
 
-        // let cmtCmplBtn = $(this);
-        // cmtCmplBtn.text('완료').attr('id', 'cmtcmplBtn');
-        // console.log(cmtCmplBtn);
+        let cmtCmplBtn = $(this);
+        cmtCmplBtn.text('완료').attr('id', 'cmtcmplBtn');
+        console.log(cmtCmplBtn);
 
-        // let cmtCancleBtn = $(this).next('button');
-        // cmtCancleBtn.text('취소').attr('id', 'modiCancleBtn');
-        // console.log(cmtCancleBtn);
+        let cmtCancleBtn = $(this).next('button');
+        cmtCancleBtn.text('취소').attr('id', 'modiCancleBtn');
+        console.log(cmtCancleBtn);
     });
 
+    // reply 수정
     $('#cmt').on('click', '#cmtcmplBtn', async function () {
-        let modiCmt = $(this).parent().parent().closest('div').find('input');
+        let modiCmt = $(this).parent().next('textarea');
         let modiCnt = modiCmt.val();
         let modiId = modiCmt.attr('id');
 
@@ -163,7 +164,7 @@ $(document).ready(() => {
 
     // reply 삭제
     $('#cmt').on('click', '#cmtDelBtn', async function () {
-        let modiCmtid = $(this).parent().parent().closest('div').find('p').attr('id');
+        let modiCmtid = $(this).parent().next('span').attr('id');
         console.log(modiCmtid);
         await deleteReply(modiCmtid);
     });
@@ -187,17 +188,30 @@ $(document).ready(() => {
         let image = detailGroup.image;
 
         let temp_html = `
-        <div>
-            <form class="intrCnt">
-                제목 <input type="text" id="titleCnt" value="${title}">
-                이미지 <input type="text" id="imageCnt" value="${image}">
-                소개 <input type="text" id="contentsCnt" value="${contents}">
-                카테고리 <input type="text" id="categoryCnt" value="${category}">
-            </form>
-            <button type="button" id="modifiedBtn">수정완료</button>
-            <button type="button" id="cancleBtn">수정취소</button>
+        <div id="intrCnt" class="row gx-4 gx-lg-5 align-items-center">
+            <div class="img-thumbnail col-md-4"><img class="card-img-top mb-5 mb-md-0" src="${detailGroup.image}" alt="..."></div>
+            <div id="intrCnt" class="col-md-8">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingTextarea2Disabled" style="height: 50px" value="${title}">
+                </div>
+                <div class="form-floating mb-3">
+                    <textarea class="form-control"  id="floatingTextarea2Disabled" style="height: 50px" disabled="">${contents}</textarea>
+                </div>
+                <div class="form-floating mb-3">
+                    <textarea class="form-control"  id="floatingTextarea2Disabled" style="height: 50px" disabled="">${image}</textarea>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control"  placeholder="name@example.com" >
+                </div>
+            </div>
+            <div class="buttons">
+                <button type="button" id="groupDel" class="btn btn-danger float-end ms-2">삭제</button>
+                <button type="button" id="groupModified" class="btn btn-warning float-end ms-2">수정</button>
+                <button type="button" class="btn btn-primary float-start me-2" id="regGroupMemberBtn">가입</button>
+                <button type="button" class="btn btn-secondary float-start me-2" id="delGroupMemberBtn">탈퇴</button>
+            </div>
         </div>`;
-        $('#intr').append(temp_html);
+        $('#intrBox').append(temp_html);
     })
 
     // Group 수정 완료 버튼
