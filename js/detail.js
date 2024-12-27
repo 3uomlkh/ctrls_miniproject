@@ -12,7 +12,7 @@ let isGroupMember = false;
 // Group 불러오기
 getCategorys().then(async (categoryArr) => {
     let detailGroup = await selectGroup(globalGroupId);
-    let image = detailGroup.image != '' ? detailGroup.image : `./assets/images/noImage.png`;
+    let image = detailGroup.image != '' && isValidUrl(detailGroup.image) ? detailGroup.image : `./assets/images/noImage.png`;
     let tempCategory;
     categoryArr.forEach(category => {
         tempCategory += `<option value="${category.name}">${category.name}</option>`;
@@ -217,4 +217,8 @@ $(document).on("click", "#cancleBtn", function () {
     window.location.reload();
 })
 
-
+/* 이미지 등록 시 주소값 유효 체크 */
+function isValidUrl(url) {
+    const urlRegex = /^(https?|ftp):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i;
+    return urlRegex.test(url);
+}
