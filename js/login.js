@@ -1,28 +1,5 @@
 // Firebase SDK import
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-// Firebase 설정
-const firebaseConfig = {
-  apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
-  authDomain: "ctrls-miniproject.firebaseapp.com",
-  projectId: "ctrls-miniproject",
-  storageBucket: "ctrls-miniproject.appspot.com",
-  messagingSenderId: "496866464655",
-  appId: "1:496866464655:web:8d866192211cf7699d31fa",
-  measurementId: "G-SGY1JM32JF",
-};
-
-// Firebase 초기화
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { collection, getDocs, doc, query, where, addDoc, updateDoc, deleteDoc, db } from './scripts.js'
 
 // DOMContentLoaded 이벤트
 document.addEventListener("DOMContentLoaded", () => {

@@ -1,20 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { collection, addDoc, query, where, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"
+// Firebase SDK import
+import { collection, getDocs, doc, query, where, addDoc, updateDoc, deleteDoc, db } from './scripts.js'
 
-const firebaseConfig = {
-    apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
-    authDomain: "ctrls-miniproject.firebaseapp.com",
-    projectId: "ctrls-miniproject",
-    storageBucket: "ctrls-miniproject.firebasestorage.app",
-    messagingSenderId: "496866464655",
-    appId: "1:496866464655:web:8d866192211cf7699d31fa",
-    measurementId: "G-SGY1JM32JF"
-}
-// Firebase 인스턴스 초기화
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app)
 // 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
 const url = new URL(window.location.href);
 let globalGroupId = url.searchParams.get('id');
