@@ -6,6 +6,38 @@ const url = new URL(window.location.href);
 const globalGroupId = url.searchParams.get('id');
 const globalMemberId = sessionStorage.getItem('memberId');
 
+
+// Group 불러오기
+
+let detailGroup = await selectGroup("1"); //여기 변수가 너무 대놓고 나와있어서 조금 걸림
+let temp_html = `
+    <div id="intrCnt" class="row gx-4 gx-lg-5 align-items-center">
+        <div class="img-thumbnail col-md-4"><img class="card-img-top mb-5 mb-md-0" src="${detailGroup.image}" alt="..."></div>
+        <div class="col-md-8">
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="floatingInputDisabled" placeholder="name@example.com" disabled="">
+                <label for="floatingInputDisabled">${detailGroup.title}</label>
+            </div>
+            <div class="form-floating mb-3">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2Disabled" style="height: 100px" disabled="">${detailGroup.contents}</textarea>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id=" " placeholder="name@example.com" disabled="">
+                <label for="floatingInputDisabled">${detailGroup.category}</label>
+            </div>
+        </div>
+        <div class="buttons">
+            <button type="button" id="groupDel" class="btn btn-danger float-end ms-2">삭제</button>
+            <button type="button" id="groupModified" class="btn btn-warning float-end ms-2">수정</button>
+            <button type="button" class="btn btn-primary float-start me-2" id="regGroupMemberBtn">가입</button>
+            <button type="button" class="btn btn-secondary float-start me-2" id="delGroupMemberBtn">탈퇴</button>
+        </div>
+    </div>`;
+
+    $('#intrBox').append(temp_html);
+
+$('#intrBox').append(temp_html);
+
 // reply 불러오기
 let replyGroup = await getReply(globalGroupId);
 let joinMember = selectGroupMember(globalGroupId, globalMemberId);
@@ -13,7 +45,7 @@ replyGroup.forEach((doc) => {
     let replyId = doc.id;
     let contents = doc.contents;
     let createId = doc.createId;
-    if (createId == globalMemberId) { // 멤버 아이디 유지해서 시험하기 번거로워서 임시 주석처리
+    if (createId == globalMemberId || detailGroup.createId == globalMemberId) { // 멤버 아이디 유지해서 시험하기 번거로워서 임시 주석처리
         let temp_html = `
         <div class="d-flex mb-4">
             <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
@@ -44,7 +76,7 @@ replyGroup.forEach((doc) => {
                     </div>
                 </div>
             </div>`;
-            $('#cmt').append(temp_html);
+        $('#cmt').append(temp_html);
     }
 
 
@@ -70,47 +102,6 @@ replyGroup.forEach((doc) => {
     // $('#cmt').append(temp_html);
 });
 
-// Group 불러오기
-
-let detailGroup = await selectGroup("1"); //여기 변수가 너무 대놓고 나와있어서 조금 걸림
-let temp_html = `
-    <div id="intrCnt" class="row gx-4 gx-lg-5 align-items-center">
-        <div class="img-thumbnail col-md-4"><img class="card-img-top mb-5 mb-md-0" src="${detailGroup.image}" alt="..."></div>
-        <div class="col-md-8">
-            <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInputDisabled" placeholder="name@example.com" disabled="">
-                <label for="floatingInputDisabled">${detailGroup.title}</label>
-            </div>
-            <div class="form-floating mb-3">
-                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2Disabled" style="height: 100px" disabled="">${detailGroup.contents}</textarea>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="email" class="form-control" id=" " placeholder="name@example.com" disabled="">
-                <label for="floatingInputDisabled">${detailGroup.category}</label>
-            </div>
-        </div>
-        <div class="buttons">
-            <button type="button" id="groupDel" class="btn btn-danger float-end ms-2">삭제</button>
-            <button type="button" id="groupModified" class="btn btn-warning float-end ms-2">수정</button>
-            <button type="button" class="btn btn-primary float-start me-2" id="regGroupMemberBtn">가입</button>
-            <button type="button" class="btn btn-secondary float-start me-2" id="delGroupMemberBtn">탈퇴</button>
-        </div>
-    </div>`;
-
-
-
-{/* <div class="intr" id="intr">
-                <img class="intrImg" src="${detailGroup.image}">
-                <div class="intrCnt" id="intrCnt">
-                    <h2>${detailGroup.title}</h2>
-                    <p>${detailGroup.contents}</p>
-                    <div class="ctg">
-                        <span>${detailGroup.category}</span>
-                    </div>
-                </div>
-            </div> */}
-
-$('#intrBox').append(temp_html);
 
 
 $(document).ready(() => {
@@ -248,10 +239,17 @@ $(document).ready(() => {
 });
 
 selectGroupMember(globalGroupId, globalMemberId).then((groupMember) => {
-    if (groupMember) {
+    if (detailGroup.createId == globalMemberId) {   // 그룹 만든 사람만 그룹 수정 및 삭제가능
+        $('#groupDel').show();
+        $('#groupModified').show();
+    } else if (groupMember) {
+        $('#groupDel').hide();
+        $('#groupModified').hide();
         $('#regGroupMemberBtn').hide();
         $('#delGroupMemberBtn').show();
     } else {
+        $('#groupDel').hide();
+        $('#groupModified').hide();
         $('#regGroupMemberBtn').show();
         $('#delGroupMemberBtn').hide();
     }
