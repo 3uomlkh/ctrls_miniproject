@@ -109,6 +109,13 @@ export async function deleteGroup(groupId) {
             let querySnapshot = await getDocs(q);
             let docSnapshot = querySnapshot.docs[0];
             await deleteDoc(doc(db, "group", docSnapshot.id));
+
+            let memberQ = query(collection(db, "groupMember"), where("groupId", "==", groupId)); // 그룹 삭제시 소속 멤버 자동 삭제
+            let memberQuerySnapshot = await getDocs(memberQ);
+            memberQuerySnapshot.docs.forEach(async (memberDoc) => {
+                await deleteDoc(doc(db, "groupMember", memberDoc.id));
+            });
+
             alert('삭제되었습니다!');
             var hostIndex = location.href.indexOf(location.host) + location.host.length;
             var context = location.href.substring(hostIndex, location.href.indexOf('/', hostIndex + 1));
