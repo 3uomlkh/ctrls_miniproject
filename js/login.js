@@ -57,11 +57,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const signInBtn = document.getElementById("sign-in-btn");
   const signUpBtn = document.getElementById("sign-up-btn");
 
+  // 비밀번호 확인 메시지 표시 함수
+  function checkPasswordMatch() {
+    const password = document.getElementById("sign-up-password").value;
+    const passwordCheck = document.getElementById("sign-up-password-check").value;
+    const message = document.getElementById("pw-confirm-message");
+
+    if (!password || !passwordCheck) {
+      message.textContent = ""; // 입력되지 않은 경우 초기화
+      return;
+    }
+
+    if (password === passwordCheck) {
+      message.textContent = "비밀번호가 일치합니다.";
+      message.style.color = "green";
+    } else {
+      message.textContent = "비밀번호가 일치하지 않습니다. 다시 확인해주세요.";
+      message.style.color = "red";
+    }
+  }
+
+  document.getElementById("sign-up-password").addEventListener("input", checkPasswordMatch);
+  document.getElementById("sign-up-password-check").addEventListener("input", checkPasswordMatch);
+
   // 회원가입 버튼 이벤트 핸들러
   if (signUpBtn) {
     signUpBtn.addEventListener("click", async () => {
       const id = document.getElementById("sign-up-id").value;
       const password = document.getElementById("sign-up-password").value;
+      const passwordCheck = document.getElementById("sign-up-password-check").value;
       const errorDiv = document.getElementById("sign-up-error");
 
       // ID와 Password가 비어있는 경우
@@ -72,6 +96,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // Password가 불일치할 경우
+      if (password !== passwordCheck) {
+        return;
+      }
+
+      // ID와 Password 길이 확인
       if (id.length < 4 || password.length < 6) {
         showToast("ID는 최소 4자, Password는 최소 6자를 입력해주세요.", true);
         return;
@@ -121,6 +151,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (querySnapshot.empty) {
             alert("ID가 존재하지 않습니다.");
+            return;
+          }
+
+          if (password !== passwordCheck) {
+            showToast("비밀번호가 일치하지 않습니다. 다시 확인해주세요.", true);
             return;
           }
 
