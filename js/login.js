@@ -141,6 +141,10 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Member signed up with ID:", docRef.id);
         showToast("회원가입 성공!");
 
+        // 로그인 화면으로 전환
+        container.classList.remove("sign-up");
+        container.classList.add("sign-in");
+
       } catch (e) {
         console.error("Error during sign up:", e);
         showToast("회원가입에 실패했습니다. 다시 시도해주세요.", true);
