@@ -54,7 +54,7 @@ function makeGroupCards(groupArr) {
         }
 
         let truncatedContents = truncateText(group.contents, 30);
-        let image = group.image != '' ? group.image : `./assets/images/noImage.png`;
+        let image = group.image != '' && isValidUrl(group.image) ? group.image : `./assets/images/noImage.png`;
         let temp_html = `
         <div class="col mb-5">
             <div class="card h-100">
@@ -81,4 +81,10 @@ function makeGroupCards(groupArr) {
 
         $('#card-container').append(temp_html);
     });
+}
+
+/* 이미지 등록 시 주소값 유효 체크 */
+function isValidUrl(url) {
+    const urlRegex = /^(https?|ftp):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i;
+    return urlRegex.test(url);
 }
