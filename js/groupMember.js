@@ -1,7 +1,7 @@
 // Firebase SDK import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { collection, doc, addDoc, getDocs, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
@@ -22,7 +22,7 @@ export async function selectGroupMember(groupId, memberId) {
         const groupMemberCollection = collection(db, "groupMember");
         const q = query(groupMemberCollection, where("groupId", "==", groupId), where("memberId", "==", memberId));
         const querySnapshot = await getDocs(q);
-        if(!querySnapshot.empty) {
+        if (!querySnapshot.empty) {
             let docSnapshot = querySnapshot.docs[0];
             let row = docSnapshot.data();
             return row;
@@ -59,11 +59,11 @@ export async function insertGroupMember(groupId, memberId) {
 export async function deleteGroupMember(groupId, memberId) {
     try {
         let checkDel = confirm("정말 탈퇴하시겠습니까?");
-        if(checkDel) {
+        if (checkDel) {
             let q = query(collection(db, "groupMember"), where("groupId", "==", groupId), where("memberId", "==", memberId));
             let querySnapshot = await getDocs(q);
             let docSnapshot = querySnapshot.docs[0];
-            await deleteDoc(doc(db, "group", docSnapshot.id));
+            await deleteDoc(doc(db, "groupMember", docSnapshot.id));
             alert('모임 탈퇴처리 되었습니다!');
             window.location.reload();
         }

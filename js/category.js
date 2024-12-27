@@ -39,7 +39,7 @@ export async function selectCategory(name) {
         let categoryGroupArr = [];
         let groupCollection = collection(db, "group");
         let q = query(groupCollection, where("category", "==", name));
-        let querySnapShot = name!='' ? await getDocs(q) : await getDocs(groupCollection);
+        let querySnapShot = name != '' ? await getDocs(q) : await getDocs(groupCollection);
         querySnapShot.forEach((doc) => {
             categoryGroupArr.push(doc.data());
         });
