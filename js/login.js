@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("sign-up-password").value;
     const passwordCheck = document.getElementById("sign-up-password-check").value;
     const message = document.getElementById("pw-confirm-message");
+    const errorDiv = document.getElementById("sign-up-error");
 
     if (!password || !passwordCheck) {
       message.textContent = ""; // 입력되지 않은 경우 초기화
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = document.getElementById("sign-up-id").value;
       const password = document.getElementById("sign-up-password").value;
       const passwordCheck = document.getElementById("sign-up-password-check").value;
-      const errorDiv = document.getElementById("sign-up-error");
+      
 
       // ID와 Password가 비어있는 경우
       if (!id || !password) {
@@ -142,6 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     signInBtn.addEventListener("click", async () => {
       const id = document.getElementById("sign-in-id").value;
       const password = document.getElementById("sign-in-password").value;
+      const errorDiv = document.getElementById("sign-in-error");
 
       if (id && password) {
         try {
@@ -150,12 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const querySnapshot = await getDocs(q);
 
           if (querySnapshot.empty) {
-            alert("ID가 존재하지 않습니다.");
-            return;
-          }
-
-          if (password !== passwordCheck) {
-            showToast("비밀번호가 일치하지 않습니다. 다시 확인해주세요.", true);
+            showToast("아이디가 존재하지 않습니다.", true);
             return;
           }
 
@@ -169,18 +166,18 @@ document.addEventListener("DOMContentLoaded", () => {
           });
 
           if (isAuthenticated) {
-            alert("로그인 성공!");
+            showToast("로그인 성공!");
             sessionStorage.setItem('memberId', id);
             window.location.href = "./main.html";
           } else {
-            alert("비밀번호가 올바르지 않습니다.");
+            showToast("비밀번호가 올바르지 않습니다.", true);
           }
         } catch (e) {
           console.error("Error during sign in:", e);
-          alert("로그인에 실패했습니다.");
+          showToast("로그인에 실패했습니다.", true);
         }
       } else {
-        alert("ID와 Password를 입력해주세요.");
+        showToast("아이디와 비밀번호를 입력해주세요.", true);
       }
     });
   }
