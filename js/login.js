@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("sign-up-password").value;
     const passwordCheck = document.getElementById("sign-up-password-check").value;
     const message = document.getElementById("pw-confirm-message");
-    const errorDiv = document.getElementById("sign-up-error");
 
     if (!password || !passwordCheck) {
       message.textContent = ""; // 입력되지 않은 경우 초기화
@@ -87,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = document.getElementById("sign-up-id").value;
       const password = document.getElementById("sign-up-password").value;
       const passwordCheck = document.getElementById("sign-up-password-check").value;
-      
+      const errorDiv = document.getElementById("sign-up-error");
 
       // ID와 Password가 비어있는 경우
       if (!id || !password) {
