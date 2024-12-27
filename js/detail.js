@@ -37,8 +37,8 @@ getCategorys().then(async (categoryArr) => {
             </div>
         </div>
         <div class="buttons">
-            <button type="button" class="btn btn-danger float-end ms-2" id="groupDel">삭제</button>
-            <button type="button" class="btn btn-warning float-end ms-2" id="groupModified">수정</button>
+            <button type="button" class="btn btn-danger float-end ms-2 display-hide" id="groupDel">삭제</button>
+            <button type="button" class="btn btn-warning float-end ms-2 display-hide" id="groupModified">수정</button>
             <button type="button" class="btn btn-primary float-start me-2" id="regGroupMemberBtn">가입</button>
             <button type="button" class="btn btn-secondary float-start me-2 display-hide" id="delGroupMemberBtn">탈퇴</button>
         </div>
@@ -56,6 +56,13 @@ getCategorys().then(async (categoryArr) => {
             isGroupMember = true;
         }
     });
+
+    // 그룹을 만든 id에게만 수정, 삭제 버튼 표시
+    if ( detailGroup.createId == globalMemberId ) {
+        $('#groupDel').toggle();
+        $('#groupModified').toggle();
+    }
+
 
     // Group 수정화면으로 변경
     $("#groupModified").click(async function () {
@@ -130,86 +137,83 @@ replyGroup.forEach((doc) => {
     }
 }); // reply end
 
-$(document).ready(() => {
+// reply
+// reply 등록
+$("#replyRgstBtn").click(async () => {
+    const contents = $("#replyCnt").val();
 
-    // reply
-    // reply 등록
-    $("#replyRgstBtn").click(async () => {
-        const contents = $("#replyCnt").val();
-
-        if (!contents) { // 비어있는지 확인
-            alert("댓글 내용을 입력해주세요.");
-            return;
-        }
-        if (!isGroupMember) {
-            alert("모임 멤버만 댓글 등록 가능합니다.");
-            return;
-        }
-        await insertReply(globalGroupId, globalMemberId, contents);
-    });
-
-    // reply 수정으로 변환
-    $('#cmt').on('click', '#cmtRegBtn', function () {
-        let modiCmtTag = $(this).parent().next('span'); // 클릭한 버튼에서 상위 한번 가까운 'p' 태그
-        let asd = modiCmtTag.text();
-        console.log(asd);
-        // 'span' 태그를 'textarea'으로 변경
-        let inputField = $('<textarea>', { class: 'form-control', rows: '2', text: asd, id: modiCmtTag.attr('id') });
-        modiCmtTag.replaceWith(inputField); // 'span' 태그를 'textarea'으로 교체
-
-        let cmtCmplBtn = $(this);
-        cmtCmplBtn.text('완료').attr('id', 'cmtcmplBtn');
-        console.log(cmtCmplBtn);
-
-        let cmtCancleBtn = $(this).next('button');
-        cmtCancleBtn.text('취소').attr('id', 'modiCancleBtn');
-        console.log(cmtCancleBtn);
-    });
-
-    // reply 수정
-    $('#cmt').on('click', '#cmtcmplBtn', async function () {
-        let modiCmt = $(this).parent().next('textarea');
-        let modiCnt = modiCmt.val();
-        let modiId = modiCmt.attr('id');
-
-        await updateReply(modiCnt, modiId);
-    });
-
-    // reply 수정 취소
-    $('#cmt').on('click', '#modiCancleBtn', function () {
-        window.location.reload();
-    });
-
-    // reply 삭제
-    $('#cmt').on('click', '#cmtDelBtn', async function () {
-        let modiCmtid = $(this).parent().next('span').attr('id');
-        console.log(modiCmtid);
-        await deleteReply(modiCmtid);
-    });
-
-
-    // Group 
-
-    // Group 삭제
-    $("#groupDel").click(async function () {
-        deleteGroup(groupIdNow);
-    })
-
-    // Group 수정 완료 버튼
-    $(document).on("click", "#modifiedBtn", async function () {
-        let groupId = globalGroupId;// 페이지 이동시 받아옴
-        let title = $('#groupTitle').val();
-        let image = $('#groupImage').val();
-        let contents = $('#groupContents').val();
-        let category = $('#groupCategory option:selected').val();
-
-        updateGroup(groupId, title, contents, image, category);
-    })
-
-    // group 수정 취소 버튼
-    $(document).on("click", "#cancleBtn", function () {
-        window.location.reload();
-    })
+    if (!contents) { // 비어있는지 확인
+        alert("댓글 내용을 입력해주세요.");
+        return;
+    }
+    if (!isGroupMember) {
+        alert("모임 멤버만 댓글 등록 가능합니다.");
+        return;
+    }
+    await insertReply(globalGroupId, globalMemberId, contents);
 });
+
+// reply 수정으로 변환
+$('#cmt').on('click', '#cmtRegBtn', function () {
+    let modiCmtTag = $(this).parent().next('span'); // 클릭한 버튼에서 상위 한번 가까운 'p' 태그
+    let asd = modiCmtTag.text();
+    console.log(asd);
+    // 'span' 태그를 'textarea'으로 변경
+    let inputField = $('<textarea>', { class: 'form-control', rows: '2', text: asd, id: modiCmtTag.attr('id') });
+    modiCmtTag.replaceWith(inputField); // 'span' 태그를 'textarea'으로 교체
+
+    let cmtCmplBtn = $(this);
+    cmtCmplBtn.text('완료').attr('id', 'cmtcmplBtn');
+    console.log(cmtCmplBtn);
+
+    let cmtCancleBtn = $(this).next('button');
+    cmtCancleBtn.text('취소').attr('id', 'modiCancleBtn');
+    console.log(cmtCancleBtn);
+});
+
+// reply 수정
+$('#cmt').on('click', '#cmtcmplBtn', async function () {
+    let modiCmt = $(this).parent().next('textarea');
+    let modiCnt = modiCmt.val();
+    let modiId = modiCmt.attr('id');
+
+    await updateReply(modiCnt, modiId);
+});
+
+// reply 수정 취소
+$('#cmt').on('click', '#modiCancleBtn', function () {
+    window.location.reload();
+});
+
+// reply 삭제
+$('#cmt').on('click', '#cmtDelBtn', async function () {
+    let modiCmtid = $(this).parent().next('span').attr('id');
+    console.log(modiCmtid);
+    await deleteReply(modiCmtid);
+});
+
+
+// Group 
+
+// Group 삭제
+$(document).on("click", "#groupDel", async function () {
+    deleteGroup(globalGroupId);
+})
+
+// Group 수정 완료 버튼
+$(document).on("click", "#modifiedBtn", async function () {
+    let groupId = globalGroupId;// 페이지 이동시 받아옴
+    let title = $('#groupTitle').val();
+    let image = $('#groupImage').val();
+    let contents = $('#groupContents').val();
+    let category = $('#groupCategory option:selected').val();
+
+    updateGroup(groupId, title, contents, image, category);
+})
+
+// group 수정 취소 버튼
+$(document).on("click", "#cancleBtn", function () {
+    window.location.reload();
+})
 
 
