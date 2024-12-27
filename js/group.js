@@ -2,7 +2,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getFirestore, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { insertGroupMember } from "./groupMember.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
@@ -58,7 +57,17 @@ export async function insertGroup(title, contents, image, category) {
             groupId: newGroupId,
             createId: createId // creatId추가
         });
-        await insertGroupMember(newGroupId, createId);
+
+        const groupMemberCollection = collection(db, "groupMember");
+        const q = query(groupMemberCollection, where("groupId", "==", newGroupId), where("memberId", "==", createId));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+            // 모임 가입
+            const docRef = await addDoc(groupMemberCollection, {
+                groupId : newGroupId,
+                memberId : createId
+            });
+        }
         alert('소모임 등록 완료!');
         window.location.reload();
     } catch (error) {
