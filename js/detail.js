@@ -28,7 +28,7 @@ getCategorys().then(async (categoryArr) => {
                 <textarea class="form-control" placeholder="소개글" id="groupContents" style="height: 100px" disabled="">${detailGroup.contents}</textarea>
             </div>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control display-hide" id="groupImage" placeholder="대표이미지" value="">
+                <input type="text" class="form-control display-hide" id="groupImage" placeholder="대표이미지" value="${detailGroup.image}">
                 <label for="groupImage">대표이미지</label>
             </div>
             <div class="form-floating mb-3">
@@ -61,6 +61,7 @@ getCategorys().then(async (categoryArr) => {
     if ( detailGroup.createId == globalMemberId ) {
         $('#groupDel').toggle();
         $('#groupModified').toggle();
+        $('#delGroupMemberBtn').toggle(); // 그룹을 만든 유저는 탈퇴 불가능
     }
 
 
