@@ -10867,3 +10867,7 @@ textarea.form-control-lg {
 .modimodiTest {
   width: 100%;
 }
+
+.display-hide {
+  display: none;
+}
