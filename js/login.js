@@ -77,8 +77,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function vaildateIdLength() {
+    const id = document.getElementById("sign-up-id").value;
+    const errorDiv = document.getElementById("sign-up-error");
+
+    if (!id || id.length > 4) {
+      errorDiv.innerText = "";
+      return;
+    }
+
+    if (id.length < 4) {
+      errorDiv.innerText = "아이디는 최소 4자를 입력해주세요.";
+      errorDiv.style.display = "block";
+    } else {
+      errorDiv.innerText = "";
+      errorDiv.style.display = "none";
+    }
+  }
+
+  function validatePasswordLength() {
+    const password = document.getElementById("sign-up-password").value;
+    const errorDiv = document.getElementById("sign-up-error-pw");
+
+    if (!password || password.length > 6) {
+      errorDiv.innerText = "";
+      return;
+    }
+
+    if (password.length < 6) {
+      errorDiv.innerText = "비밀번호는 최소 6자를 입력해주세요.";
+      errorDiv.style.display = "block";
+    } else {
+      errorDiv.innerText = "";
+      errorDiv.style.display = "none";
+    }
+  }
+
   document.getElementById("sign-up-password").addEventListener("input", checkPasswordMatch);
   document.getElementById("sign-up-password-check").addEventListener("input", checkPasswordMatch);
+  document.getElementById("sign-up-id").addEventListener("input", vaildateIdLength);
+  document.getElementById("sign-up-password").addEventListener("input", validatePasswordLength);
 
   // 회원가입 버튼 이벤트 핸들러
   if (signUpBtn) {
@@ -90,20 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // ID와 Password가 비어있는 경우
       if (!id || !password) {
+        errorDiv.innerText = "아이디와 비밀번호는 필수값입니다.";
+        errorDiv.style.display = "block";
+        return;
+      } else {
         errorDiv.innerText = "";
         errorDiv.style.display = "none";
-        showToast("ID와 Password를 입력해주세요.", true);
-        return;
       }
 
       // Password가 불일치할 경우
       if (password !== passwordCheck) {
-        return;
-      }
-
-      // ID와 Password 길이 확인
-      if (id.length < 4 || password.length < 6) {
-        showToast("ID는 최소 4자, Password는 최소 6자를 입력해주세요.", true);
         return;
       }
 
