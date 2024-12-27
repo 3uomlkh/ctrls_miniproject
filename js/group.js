@@ -97,23 +97,26 @@ export async function updateGroup(groupId, title, contents, image, category) {
 export async function deleteGroup(groupId) {
     try {
         let checkDel = confirm("정말 삭제하시겠습니까?");
+        let deletePromises = [];
         if (checkDel) {
-            let q = query(collection(db, "group"), where("groupId", "==", groupId)); // 그룹 아이디가 일치하는 문서만 불러온다
-            let querySnapshot = await getDocs(q);
+            let groupQ = query(collection(db, "group"), where("groupId", "==", groupId)); // 그룹 아이디가 일치하는 문서만 불러온다
+            let querySnapshot = await getDocs(groupQ);
             let docSnapshot = querySnapshot.docs[0];
-            await deleteDoc(doc(db, "group", docSnapshot.id));
+            deletePromises.push(deleteDoc(doc(db, "group", docSnapshot.id)));
 
             let memberQ = query(collection(db, "groupMember"), where("groupId", "==", groupId)); // 그룹 삭제시 소속 멤버 자동 삭제
             let memberQuerySnapshot = await getDocs(memberQ);
-            memberQuerySnapshot.docs.forEach(async (memberDoc) => {
-                await deleteDoc(doc(db, "groupMember", memberDoc.id));
-            });
+            for (const memberDoc of memberQuerySnapshot.docs) {
+                deletePromises.push(deleteDoc(doc(db, "groupMember", memberDoc.id)));
+            }
 
             let replyQ = query(collection(db, "reply"), where("groupId", "==", groupId)); // 그룹 삭제시 댓글 자동 삭제
             let replyQuerySnapshot = await getDocs(replyQ);
-            replyQuerySnapshot.docs.forEach(async (replyDoc) => {
-                await deleteDoc(doc(db, "reply", replyDoc.id));
-            });
+            for (const replyDoc of replyQuerySnapshot.docs) {
+                deletePromises.push(deleteDoc(doc(db, "reply", replyDoc.id)));
+            }
+
+            await Promise.all(deletePromises); // 한번에 삭제처리
 
             alert('삭제되었습니다!');
             var hostIndex = location.href.indexOf(location.host) + location.host.length;
