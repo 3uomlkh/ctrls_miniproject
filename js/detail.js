@@ -1,5 +1,6 @@
 import { insertReply, getReply, updateReply, deleteReply } from "./reply.js";
 import { selectGroup, deleteGroup, updateGroup } from "./group.js";
+import { selectGroupMember, insertGroupMember } from "./groupMember.js";
 
 const url = new URL(window.location.href);
 const globalGroupId = url.searchParams.get('id');
@@ -7,45 +8,44 @@ const globalMemberId = sessionStorage.getItem('memberId');
 
 // reply 불러오기
 let replyGroup = await getReply(globalGroupId);
+let joinMember = selectGroupMember(globalGroupId, globalMemberId);
 replyGroup.forEach((doc) => {
     let replyId = doc.id;
     let contents = doc.contents;
     let createId = doc.createId;
-
-    // if (createId == memberid) { // 멤버 아이디 유지해서 시험하기 번거로워서 임시 주석처리
-
-    
-    let temp_html = `
+    if (createId == globalMemberId) { // 멤버 아이디 유지해서 시험하기 번거로워서 임시 주석처리
+        let temp_html = `
         <div class="d-flex mb-4">
             <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
                     alt="..." /></div>
             <div class="input-group">
                 <div class="ms-3">
-                    <div class="fw-bold" id="${replyId}">
+                    <div class="fw-bold" id="${createId}">
                         ${createId}
-                        <button type="button" id="cmtRegBtn">수정</button>
-                        <button type="button" id="cmtDelBtn">삭제</button>
+                        <button type="button" class="modimodi" id="cmtRegBtn">수정</button>
+                        <button type="button" class="modimodi" id="cmtDelBtn">삭제</button>
                     </div>
                     <span id="${replyId}">${contents}</span>
                 </div>
             </div>
         </div>`;
-    // } else {
-    //     let temp_html = `
-    //         <div class="d-flex mb-4">
-    //             <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
-    //                     alt="..." /></div>
-    //             <div class="input-group">
-    //                 <div class="ms-3">
-    //                     <div class="fw-bold" id="${replyId}">
-    //                         ${createId}
-    //                     </div>
-    //                     ${contents}
-    //                 </div>
-    //             </div>
-    //         </div>`;
-    // }
-    $('#cmt').append(temp_html);
+        $('#cmt').append(temp_html);
+    } else {
+        let temp_html = `
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
+                        alt="..." /></div>
+                <div class="input-group">
+                    <div class="ms-3">
+                        <div class="fw-bold" id="${replyId}">
+                            ${createId}
+                        </div>
+                        <span id="${replyId}">${contents}</span>
+                    </div>
+                </div>
+            </div>`;
+            $('#cmt').append(temp_html);
+    }
 
 
     // // if (createId == memberid) { // 멤버 아이디 유지해서 시험하기 번거로워서 임시 주석처리
@@ -119,15 +119,15 @@ $(document).ready(() => {
 
     // reply 등록
     $("#replyRgstBtn").click(async () => {
-        const groupId = globalGroupId; // 페이지 이동 시 받아오는 그룹 ID 맨위에 선언
         const contents = $("#replyCnt").val();
-        const createId = globalMemberId; // 세션에서 가져온 멤버 ID 맨위에 선언
 
         if (!contents) { // 비어있는지 확인
             alert("댓글 내용을 입력해주세요.");
             return;
+        } else if (joinMember.memberId == globalMemberId && joinMember.groupId == globalGroupId) {
+
         }
-        await insertReply(groupId, createId, contents);
+        await insertReply(globalGroupId, globalMemberId, contents);
     });
 
     // reply 수정으로 변환
