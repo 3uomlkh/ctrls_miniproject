@@ -2,6 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { getAuth, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
@@ -16,6 +17,16 @@ const firebaseConfig = {
 // Firebase 인스턴스 초기화
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+
+// 로그인 유지
+setPersistence(auth, browserLocalPersistence)
+    .then(() => {
+        console.log("로그인 상태가 유지됩니다.");
+    })
+    .catch((error) => {
+        console.error("로그인 유지 설정 오류:", error);
+    });
 
 // Groups 불러오기
 let groupArr = [];
@@ -37,6 +48,12 @@ export default groupArr;
 // Group 등록
 export async function insertGroup(title, contents, image, category) {
     try {
+//로그인된 사용자 아이디 가져옴
+        const createId = sessionStorage.getItem('memberId');
+        if (!createId) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
         let groupDocs = await getDocs(collection(db, "group"));
         let newGroupId = groupDocs.size > 0
             ? Math.max(...groupDocs.docs.map(doc => Number(doc.data().groupId))) + 1
@@ -48,7 +65,8 @@ export async function insertGroup(title, contents, image, category) {
             contents: contents,
             image: image,
             category: category,
-            groupId: newGroupId
+            groupId: newGroupId,
+            createId: createId // creatId추가
         });
 
         alert('소모임 등록 완료!');
