@@ -222,3 +222,8 @@ function isValidUrl(url) {
     const urlRegex = /^(https?|ftp):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i;
     return urlRegex.test(url);
 }
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+    sessionStorage.removeItem("memberId"); // 로그인 취소
+    window.location.href = "index.html";  // 로그인 페이지로 이동
+});
