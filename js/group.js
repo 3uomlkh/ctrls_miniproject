@@ -19,15 +19,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// 로그인 유지
-setPersistence(auth, browserLocalPersistence)
-    .then(() => {
-        console.log("로그인 상태가 유지됩니다.");
-    })
-    .catch((error) => {
-        console.error("로그인 유지 설정 오류:", error);
-    });
-
 // Groups 불러오기
 let groupArr = [];
 export async function getGroups() {
