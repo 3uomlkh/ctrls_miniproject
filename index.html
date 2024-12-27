@@ -26,8 +26,9 @@
             </div>
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
-              <input type="password" id="sign-up-password" oninput="pwCheck()" placeholder="비밀번호">
-              <input type="password" id="sign-up-password-check" oninput="pwCheck()" placeholder="비밀번호 확인">
+              <input type="password" id="sign-up-password" placeholder="비밀번호">
+              <div id="sign-up-error-pw" class="error-message"></div>
+              <input type="password" id="sign-up-password-check" placeholder="비밀번호 확인">
               <span id="pw-confirm-message"></span>
             </div>
             <button id="sign-up-btn">
