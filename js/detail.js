@@ -19,7 +19,7 @@ replyGroup.forEach((doc) => {
             <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
                     alt="..." /></div>
             <div class="input-group">
-                <div class="ms-3">
+                <div class="ms-3 modimodiTest">
                     <div class="fw-bold" id="${createId}">
                         ${createId}
                         <button type="button" class="modimodi" id="cmtRegBtn">수정</button>
@@ -36,7 +36,7 @@ replyGroup.forEach((doc) => {
                 <div class="flex-shrink-0"><img class="rounded-circle" src="./assets/images/reply.png"
                         alt="..." /></div>
                 <div class="input-group">
-                    <div class="ms-3">
+                    <div class="ms-3 '">
                         <div class="fw-bold" id="${replyId}">
                             ${createId}
                         </div>
