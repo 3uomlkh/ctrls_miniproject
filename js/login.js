@@ -72,6 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      if (id.length < 4 || password.length < 6) {
+        showToast("ID는 최소 4자, Password는 최소 6자를 입력해주세요.", true);
+        return;
+      }
+
       try {
         // 중복 ID 체크
         const memberCollection = collection(db, "members");
