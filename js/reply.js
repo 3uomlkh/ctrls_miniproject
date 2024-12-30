@@ -1,5 +1,5 @@
 // Firebase SDK import
-import { collection, getDocs, doc, query, where, addDoc, updateDoc, deleteDoc, db } from './scripts.js'
+import { collection, getDocs, doc, query, where, setDoc, updateDoc, deleteDoc, db } from './scripts.js'
 
 // 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
 const url = new URL(window.location.href);
@@ -29,15 +29,19 @@ export async function getReply(groupId) {
 // reply 등록 (attr: groupId, createId, contents)
 export async function insertReply(groupId, createId, contents) {
     try {
-        console.log('gr : '+groupId);
-        console.log('co : '+contents);
-        console.log('cr : '+createId);
-        let doc = {
-            'groupId': groupId,
-            'contents': contents,
-            'createId': createId
-        }
-        await addDoc(collection(db, "reply"), doc);
+        let now = Date.now();
+        const docRef = doc(db, "reply", "reply" + now);
+        await setDoc(docRef, {
+            groupId: groupId,
+            contents: contents,
+            createId: createId,
+        });
+        // let doc = {
+        //     'groupId': groupId,
+        //     'contents': contents,
+        //     'createId': createId
+        // }
+        // await addDoc(collection(db, "reply"), doc);
         alert('댓글 등록!');
         window.location.reload();
     } catch (err) {
