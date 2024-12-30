@@ -25,6 +25,7 @@ export async function insertGroup(title, contents, image, category) {
         const createId = sessionStorage.getItem('memberId');
         if (!createId) {
             alert('로그인이 필요합니다.');
+            
             return;
         }
         let groupDocs = await getDocs(collection(db, "group"));
