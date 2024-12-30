@@ -9,7 +9,7 @@
 // Firebase SDK import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { addDoc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
@@ -25,4 +25,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export { collection, getDocs, doc, query, where, addDoc, updateDoc, deleteDoc, db };
+export { collection, getDocs, doc, query, where, setDoc, addDoc, updateDoc, deleteDoc, db };
