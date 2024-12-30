@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
+        integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="./js/detail.js"></script>
+    <script type="module" src="./js/reply.js"></script>
+    <script type="module" src="./js/group.js"></script>
+    <script type="module">
+        // Firebase SDK 라이브러리 가져오기
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc, query, where, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { insertReply, getReply, updateReply, deleteReply } from '/js/reply.js';
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8Do_4_ZDADE64D6v1gbF36_NfaRDvh24",
+            authDomain: "ctrls-miniproject.firebaseapp.com",
+            projectId: "ctrls-miniproject",
+            storageBucket: "ctrls-miniproject.firebasestorage.app",
+            messagingSenderId: "496866464655",
+            appId: "1:496866464655:web:8d866192211cf7699d31fa",
+            measurementId: "G-SGY1JM32JF"
+        };
+
+        // Firebase 인스턴스 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 받아올 예정? 이후 어떻게 받을지 아님 직점 만들지 정해서 맨위에 한번 선언해서 계속 쓸듯
+        let groupIdNow = '받아온 그룹 아이디';
+        let memberId = $.cookie('memberId');
+
+    </script>
+    <style>
+        .intr {
+            width: 1200px;
+            display: flex;
+        }
+
+        .intrImg {
+            width: 400px;
+            margin-right: 50px;
+        }
+
+        .intrCnt {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ctg {
+            position: relative;
+            display: block;
+            height: 36px;
+            margin: 12px 0 12px 6px;
+            padding: 0 12px;
+            border-radius: 36px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 36px;
+            color: #222225;
+            letter-spacing: -.3px;
+            text-decoration: none;
+            background-color: #f7f7f9;
+        }
+
+        .intrMng {
+            width: 1200px;
+            display: flex;
+        }
+
+        .btnMng {
+            margin-left: auto;
+        }
+
+        .testStyle {
+            width: 1200px;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 소모임 소개 -->
+    <div id="intrBox">
+        <!-- <div class="intr" id="intr">
+            <img class="intrImg" src="https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg">
+            <div class="intrCnt" id="intrCnt">
+                <h2>소모임 이름</h2>
+                <p>소모임 설명</p>
+                <div class="ctg">
+                    <span>카테고리</span>
+                </div>
+            </div>
+        </div> -->
+    </div>
+
+
+    <!-- 소모임 소개 수정 & 삭제 -->
+    <div class="intrMng">
+        <div class="btnMng">
+            <button type="button" id="groupModified">수정</button>
+            <button type="button" id="groupDel">삭제</button>
+        </div>
+    </div>
+
+
+    <!-- 댓글 -->
+    <div>
+        <div class="intrMng">
+            <div>
+                <input type="text" name="replyCnt" id="replyCnt"> <!-- 댓글 작성 -->
+            </div>
+            <button type="button" name="replyRgstBtn" id="replyRgstBtn">등록</button>
+        </div>
+        <div class="cmt" id="cmt">
+        <!-- 댓글 있는 곳 -->
+        </div>
+    </div>
+
+</body>
+
+</html>
