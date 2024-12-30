@@ -250,8 +250,40 @@ body {
     color: red;
     font-size: 14px;
     margin-top: 5px;
-    display: none; /* 초기에는 숨김 */
-  }  
+    display: none;
+    /* 초기에는 숨김 */
+}
+
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin: 0 auto;
+    background-color: #4caf50;
+    /* 성공: 초록색 */
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    padding: 10px;
+    position: fixed;
+    z-index: 1000;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.toast.error {
+    background-color: #f44336;
+    /* 실패: 빨간색 */
+}
+
 
 /* BACKGROUND */
 

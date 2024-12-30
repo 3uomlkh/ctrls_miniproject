@@ -4,13 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In / Sign Up Form</title>
+  <title>소모임</title>
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
   <link rel="stylesheet" href="css/login.css">
   <script type="module" src="js/login.js"></script>
-
+  <script type="module" src="js/scripts.js"></script>
 </head>
 
 <body>
+  <div id="toast" class="toast"></div>
   <div id="container" class="container">
     <!-- FORM SECTION -->
     <div class="row">
@@ -26,6 +29,9 @@
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
               <input type="password" id="sign-up-password" placeholder="비밀번호">
+              <div id="sign-up-error-pw" class="error-message"></div>
+              <input type="password" id="sign-up-password-check" placeholder="비밀번호 확인">
+              <span id="pw-confirm-message"></span>
             </div>
             <button id="sign-up-btn">
               회원가입
@@ -50,6 +56,7 @@
             <div class="input-group">
               <i class='bx bxs-user'></i>
               <input type="text" id="sign-in-id" placeholder="아이디">
+              <div id="sign-in-error" class="error-message"></div>
             </div>
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
